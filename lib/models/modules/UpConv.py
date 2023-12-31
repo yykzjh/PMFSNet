@@ -9,7 +9,6 @@
 import torch
 import torch.nn as nn
 
-from lib.models.modules.ConvBlock import DepthWiseSeparateConvBlock
 
 
 class UpConv(nn.Module):

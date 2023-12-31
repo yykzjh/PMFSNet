@@ -288,7 +288,7 @@ def main():
 
     # initialize the model, optimizer, and lr_scheduler
     model, optimizer, lr_scheduler = models.get_model_optimizer_lr_scheduler(params)
-    print("Complete the model:{}, optimizer:{}, and lr_scheduler:{}".format(params["model_name"], params["optimizer_name"], params["lr_scheduler_name"]))
+    print("Complete the initialization of model:{}, optimizer:{}, and lr_scheduler:{}".format(params["model_name"], params["optimizer_name"], params["lr_scheduler_name"]))
 
     # initialize the loss function
     loss_function = losses.get_loss_function(params)
