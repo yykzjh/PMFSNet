@@ -1,5 +1,11 @@
 .idea/
 .DS_Store
+datasets/
+images/
+pretrain/
+runs/
+log/
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
