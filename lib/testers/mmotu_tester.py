@@ -9,6 +9,7 @@
 import os
 import cv2
 import numpy as np
+from PIL import Image
 from tqdm import tqdm
 
 import torch
@@ -36,9 +37,9 @@ class MMOTUTester:
             transforms.Normalize(mean=self.opt["normalize_means"], std=self.opt["normalize_stds"])
         ])
 
-        image_np = cv2.imread(image_path, -1)
-        h, w, c = image_np.shape
-        image = test_transforms(image_np)
+        image_pil = Image.open(image_path)
+        w, h = image_pil.size
+        image = test_transforms(image_pil)
         dir_path, image_name = os.path.split(image_path)
         dot_pos = image_name.find(".")
         file_name = image_name[:dot_pos]
@@ -53,7 +54,9 @@ class MMOTUTester:
         segmented_image = torch.argmax(output, dim=1).squeeze(0).to(dtype=torch.uint8).cpu().numpy()
         segmented_image = cv2.resize(segmented_image, (w, h), interpolation=cv2.INTER_AREA)
         segmented_image[segmented_image == 1] = 255
+        print(segmented_image.max())
         cv2.imwrite(segmentation_image_path, segmented_image)
+        print("Save segmented image to {}".format(segmentation_image_path))
 
     def evaluation(self, dataloader):
         self.reset_statistics_dict()

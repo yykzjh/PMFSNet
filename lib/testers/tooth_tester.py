@@ -53,6 +53,7 @@ class ToothTester:
 
         segmented_image = torch.argmax(output, dim=1).squeeze(0).cpu().numpy()
         np.save(segmentation_image_path, segmented_image)
+        print("Save segmented image to {}".format(segmentation_image_path))
 
 
     def evaluation(self, dataloader):

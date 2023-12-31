@@ -282,7 +282,7 @@ def main():
     valid_loader = dataloaders.get_test_dataloader(params)
     print("Complete the initialization of dataloader")
 
-    # initialize the model, optimizer, and lr_scheduler
+    # initialize the model
     model = models.get_model(params)
     print("Complete the initialization of model:{}".format(params["model_name"]))
 
