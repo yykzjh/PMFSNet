@@ -1,7 +1,6 @@
 .idea/
 .DS_Store
 datasets/
-images/
 pretrain/
 runs/
 log/
