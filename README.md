@@ -3,12 +3,10 @@
 PMFSNet : Polarized Multi-scale Feature Self-attention Network For Lightweight Medical Image Segmentation
 ![PMFSNet.png](https://github.com/yykzjh/PMFSNet/blob/master/images/PMFSNet.png)
 
-## Release To-do List
+## To-do List
 - [x] Training and testing code
 - [x] Training weights of other models on our experiments 
 - [x] Pre-training weights of PMFSNet on ImageNet2012
-- [ ] PMFSNet core code
-- [ ] Training weights of the PMFSNet on our experiments
 
 ## Environment
 Please prepare an environment with python=3.8:
