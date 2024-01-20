@@ -2,6 +2,7 @@
 
 PMFSNet : Polarized Multi-scale Feature Self-attention Network For Lightweight Medical Image Segmentation
 ![PMFSNet.png](https://github.com/yykzjh/PMFSNet/blob/master/images/PMFSNet.png)
+![3D_CBCT_Tooth_bubble_image.jpg](https://github.com/yykzjh/PMFSNet/blob/master/images/3D_CBCT_Tooth_bubble_image.jpg)
 
 ## To-do List
 - [x] Training and testing code
@@ -219,3 +220,4 @@ Comparison results of different methods on the ISIC 2018 dataset.
 + [research-contributions](https://github.com/Project-MONAI/research-contributions)
 + [Image_Segmentation](https://github.com/LeeJunHyun/Image_Segmentation)
 + [ISIC 2018](https://challenge.isic-archive.com/data/#2018)
++ [surface-distance](https://github.com/google-deepmind/surface-distance)
