@@ -260,8 +260,8 @@ def main():
     params["dataset_name"] = args.dataset
     params["dataset_path"] = os.path.join(r"./datasets", ("NC-release-data-checked" if args.dataset == "3D-CBCT-Tooth" else args.dataset))
     params["model_name"] = args.model
-    if args.pretrain_weight is None:
-        raise RuntimeError("model weights cannot be None")
+    # if args.pretrain_weight is None:
+    #     raise RuntimeError("model weights cannot be None")
     params["pretrain"] = args.pretrain_weight
     params["dimension"] = args.dimension
     params["scaling_version"] = args.scaling_version
@@ -290,11 +290,22 @@ def main():
     print("Complete the initialization of tester")
 
     # load training weights
-    tester.load()
+    if params["pretrain"] is not None:
+        tester.load()
     print("Complete loading training weights")
 
     # evaluate valid set
     tester.inference(args.image_path)
+    tsum = 0.0
+    if params["dataset_name"] != "3D-CBCT-Tooth":
+        tsum += tester.inference(args.image_path)
+        tsum += tester.inference(args.image_path)
+        tsum += tester.inference(args.image_path)
+        tsum += tester.inference(args.image_path)
+        tsum += tester.inference(args.image_path)
+        print(tsum / 5)
+
+
 
 
 if __name__ == '__main__':

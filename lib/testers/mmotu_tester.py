@@ -7,6 +7,8 @@
 @License  :   (C)Copyright 2024
 """
 import os
+import time
+
 import cv2
 import numpy as np
 from PIL import Image
@@ -49,14 +51,16 @@ class MMOTUTester:
         with torch.no_grad():
             image = torch.unsqueeze(image, dim=0)
             image = image.to(self.device)
+            t1 = time.time()
             output = self.model(image)
+            t2 = time.time()
 
         segmented_image = torch.argmax(output, dim=1).squeeze(0).to(dtype=torch.uint8).cpu().numpy()
         segmented_image = cv2.resize(segmented_image, (w, h), interpolation=cv2.INTER_AREA)
         segmented_image[segmented_image == 1] = 255
-        print(segmented_image.max())
-        cv2.imwrite(segmentation_image_path, segmented_image)
-        print("Save segmented image to {}".format(segmentation_image_path))
+        # cv2.imwrite(segmentation_image_path, segmented_image)
+        # print("Save segmented image to {}".format(segmentation_image_path))
+        return (t2 - t1) * 1000
 
     def evaluation(self, dataloader):
         self.reset_statistics_dict()
