@@ -8,8 +8,6 @@
 """
 import os
 import math
-import time
-
 import numpy as np
 from tqdm import tqdm
 
@@ -53,9 +51,9 @@ class ToothTester:
             image = image.to(self.device)
             output = self.split_test(image)
 
-        # segmented_image = torch.argmax(output, dim=1).squeeze(0).cpu().numpy()
-        # np.save(segmentation_image_path, segmented_image)
-        # print("Save segmented image to {}".format(segmentation_image_path))
+        segmented_image = torch.argmax(output, dim=1).squeeze(0).cpu().numpy()
+        np.save(segmentation_image_path, segmented_image)
+        print("Save segmented image to {}".format(segmentation_image_path))
 
 
     def evaluation(self, dataloader):
@@ -75,9 +73,6 @@ class ToothTester:
         self.display_statistics_dict()
 
     def split_test(self, image):
-        use = 0
-        tsum = 0.0
-        count = 0
         ori_shape = image.size()[2:]
         output = torch.zeros((image.size()[0], self.opt["classes"], *ori_shape), device=self.device)
         slice_shape = self.opt["crop_size"]
@@ -112,14 +107,7 @@ class ToothTester:
                             start2 = end2 - slice_shape[2]
 
                         slice_tensor = image[:, :, start0:end0, start1:end1, start2:end2]
-                        slice_tensor = slice_tensor.to(self.device)
-                        t1 = time.time()
-                        slice_predict = self.model(slice_tensor)
-                        t2 = time.time()
-                        if (use + 1) % 10 == 0:
-                            tsum += (t2 - t1) * 1000
-                            count += 1
-                        use += 1
+                        slice_predict = self.model(slice_tensor.to(self.device))
                         output[:, :, start0:end0, start1:end1, start2:end2] += slice_predict
                         bar.update(1)
 
@@ -132,8 +120,6 @@ class ToothTester:
                 if shape0_end >= ori_shape[0]:
                     break
 
-        print(tsum / count)
-        exit()
         return output
 
     def load(self):
