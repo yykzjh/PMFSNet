@@ -11,6 +11,7 @@ import argparse
 
 import pandas as pd
 import torch
+from scipy import stats
 
 from lib import utils, dataloaders, models, metrics, testers
 
@@ -234,5 +235,35 @@ def main(CUDA_VISIBLE_DEVICES=0, seed=1777777, benchmark=False, deterministic=Tr
         iou_df.to_excel(os.path.join(r"./files", dataset_name + "_iou.xlsx"))
 
 
+def calculate_p_value(file_path, base_model_name):
+    # load df
+    df = pd.read_excel(file_path, sheet_name='Sheet1')
+
+    # extract base_model_name column
+    base_model_scores = df[base_model_name]
+
+    # define p_value dict
+    p_values = {}
+
+    # paired t-test for each of the other model columns
+    for model_name in df.columns:
+        # exclude base_model_name
+        if model_name != base_model_name:
+            model_scores = df[model_name]
+            t_stat, p_value = stats.ttest_rel(model_scores, base_model_scores)
+            p_values[model_name] = p_value
+
+    # print p_value
+    print("p-values relative to {}:".format(base_model_scores))
+    for model_name, p_value in p_values.items():
+        print(f"{model_name}: {p_value}")
+
+
 if __name__ == '__main__':
+    # evaluate all metrics
     main(CUDA_VISIBLE_DEVICES="0", seed=1777777, benchmark=False, deterministic=True)
+
+    # calculate p_value
+    # calculate_p_value(file_path=r"./files/ISIC-2018_dsc.xlsx", base_model_name="PMFSNet")
+
+
