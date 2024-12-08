@@ -7,7 +7,8 @@
 @License  :   (C)Copyright 2024
 """
 import os
-import argparse
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "max_split_size_mb:128"
 
 import pandas as pd
 import torch
@@ -191,7 +192,9 @@ def run(params, dataset_ind, dataset_total, model_ind, model_total):
     return tester.evaluate_all_metrics(valid_loader)
 
 
-def main():
+def main(seed=1777777, benchmark=False, deterministic=True):
+    # launch initialization
+    utils.reproducibility(seed, deterministic, benchmark)
     # define datasets
     datasets_list = ["3D-CBCT-Tooth", "ISIC-2018"]
     # define the corresponding models
@@ -256,12 +259,8 @@ def calculate_p_value(file_path, base_model_name):
 
 
 if __name__ == '__main__':
-    # launch initialization
-    os.environ["CUDA_VISIBLE_DEVICES"] = "1"
-    os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "max_split_size_mb:128"
-    utils.reproducibility(1777777, True, False)
     # evaluate all metrics
-    main()
+    main(seed=1777777, benchmark=False, deterministic=True)
 
     # calculate p_value
     # calculate_p_value(file_path=r"./files/ISIC-2018_dsc.xlsx", base_model_name="PMFSNet")
