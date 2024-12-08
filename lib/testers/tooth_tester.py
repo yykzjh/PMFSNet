@@ -72,6 +72,30 @@ class ToothTester:
 
         self.display_statistics_dict()
 
+    def evaluate_all_metrics(self, dataloader):
+        metrics_dict = {
+            metric_name: []
+            for metric_name in self.opt["metric_names"]
+        }
+
+        self.model.eval()
+        with torch.no_grad():
+            for image, label in dataloader:
+                # forward inference
+                image = image.to(self.device)
+                label = label.to(self.device)
+                output = self.split_test(image)
+                # get label mask
+                mask = torch.zeros(self.opt["classes"])
+                unique_index = torch.unique(label).int()
+                for index in unique_index:
+                    mask[index] = 1
+                # calculate metrics
+                for i, metric in enumerate(self.metrics):
+                    per_class_metric = metric(output.cpu(), label.cpu())
+                    metrics_dict[self.opt["metric_names"][i]].append((torch.sum(per_class_metric) / torch.sum(mask)).item())
+        return metrics_dict["DSC"], metrics_dict["IoU"]
+
     def split_test(self, image):
         ori_shape = image.size()[2:]
         output = torch.zeros((image.size()[0], self.opt["classes"], *ori_shape), device=self.device)

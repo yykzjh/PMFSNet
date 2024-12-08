@@ -48,12 +48,14 @@ class ISIC2018Tester:
         self.model.eval()
         with torch.no_grad():
             image = torch.unsqueeze(image, dim=0)
+            print(image.shape)
             image = image.to(self.device)
             output = self.model(image)
 
         segmented_image = torch.argmax(output, dim=1).squeeze(0).to(dtype=torch.uint8).cpu().numpy()
+        print(np.sum(segmented_image > 0))
         segmented_image = cv2.resize(segmented_image, (w, h), interpolation=cv2.INTER_AREA)
-        segmented_image[segmented_image == 1] = 255
+        print(segmented_image.shape)
         cv2.imwrite(segmentation_image_path, segmented_image)
         print("Save segmented image to {}".format(segmentation_image_path))
 
@@ -74,6 +76,28 @@ class ISIC2018Tester:
         ACC = self.statistics_dict["ACC_sum"] / self.statistics_dict["count"]
 
         print("valid_DSC:{:.6f}  valid_IoU:{:.6f}  valid_ACC:{:.6f}  valid_JI:{:.6f}".format(dsc, class_IoU[1], ACC, JI))
+
+    def evaluate_all_metrics(self, dataloader):
+        metrics_dict = {
+            metric_name: []
+            for metric_name in self.opt["metric_names"]
+        }
+
+        self.model.eval()
+        with torch.no_grad():
+            for input_tensor, target in dataloader:
+                input_tensor, target = input_tensor.to(self.device), target.to(self.device)
+                output = self.model(input_tensor)
+                # calculate metrics
+                for metric_name, metric_func in self.metrics.items():
+                    if metric_name == "IoU":
+                        area_intersect, area_union, _, _ = metric_func(output, target)
+                        class_IoU = area_intersect.numpy() / area_union.numpy()
+                        class_IoU = np.nan_to_num(class_IoU)
+                        metrics_dict[metric_name].append(class_IoU[1])
+                    elif metric_name == "DSC":
+                        metrics_dict[metric_name].append(metric_func(output, target))
+        return metrics_dict["DSC"], metrics_dict["IoU"]
 
     def calculate_metric_and_update_statistcs(self, output, target, cur_batch_size):
         mask = torch.zeros(self.opt["classes"])
