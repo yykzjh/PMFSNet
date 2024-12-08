@@ -191,7 +191,7 @@ def run(params, dataset_ind, dataset_total, model_ind, model_total):
     return tester.evaluate_all_metrics(valid_loader)
 
 
-def main(CUDA_VISIBLE_DEVICES=0, seed=1777777, benchmark=False, deterministic=True):
+def main(CUDA_VISIBLE_DEVICES="0", seed=1777777, benchmark=False, deterministic=True):
     # launch initialization
     os.environ["CUDA_VISIBLE_DEVICES"] = CUDA_VISIBLE_DEVICES
     os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "max_split_size_mb:128"
@@ -261,7 +261,7 @@ def calculate_p_value(file_path, base_model_name):
 
 if __name__ == '__main__':
     # evaluate all metrics
-    main(CUDA_VISIBLE_DEVICES="0", seed=1777777, benchmark=False, deterministic=True)
+    main(CUDA_VISIBLE_DEVICES="1", seed=1777777, benchmark=False, deterministic=True)
 
     # calculate p_value
     # calculate_p_value(file_path=r"./files/ISIC-2018_dsc.xlsx", base_model_name="PMFSNet")
