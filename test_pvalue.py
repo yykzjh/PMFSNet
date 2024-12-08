@@ -196,7 +196,7 @@ def main(seed=1777777, benchmark=False, deterministic=True):
     # launch initialization
     utils.reproducibility(seed, deterministic, benchmark)
     # define datasets
-    datasets_list = ["ISIC-2018"]
+    datasets_list = ["3D-CBCT-Tooth", "ISIC-2018"]
     # define the corresponding models
     models_list = [
         ["UNet3D", "DenseVNet", "AttentionUNet3D", "DenseVoxelNet", "MultiResUNet3D", "UNETR", "SwinUNETR", "TransBTS", "nnFormer", "3DUXNet", "PMFSNet"],
