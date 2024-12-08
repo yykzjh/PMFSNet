@@ -262,11 +262,12 @@ def calculate_p_value(dataset_name, metric_name, base_model_name):
     p_value_df = pd.DataFrame(p_values)
     p_value_df.to_excel(os.path.join(r"./files", dataset_name + "_" + metric_name + "_pvalue" + ".xlsx"))
 
+
 if __name__ == '__main__':
     # evaluate all metrics
     main(seed=1777777, benchmark=False, deterministic=True)
 
     # calculate p_value
-    calculate_p_value(dataset_name="ISIC-2018", metric_name="dsc", base_model_name="PMFSNet")
+    # calculate_p_value(dataset_name="ISIC-2018", metric_name="dsc", base_model_name="PMFSNet")
 
 
