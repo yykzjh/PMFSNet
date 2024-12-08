@@ -87,7 +87,8 @@ class ISIC2018Tester:
         with torch.no_grad():
             for input_tensor, target in dataloader:
                 input_tensor, target = input_tensor.to(self.device), target.to(self.device)
-                output = self.model(input_tensor)
+                output = self.model(input_tensor).cpu().float()
+                target = target.cpu().float()
                 # calculate metrics
                 for metric_name, metric_func in self.metrics.items():
                     if metric_name == "IoU":
