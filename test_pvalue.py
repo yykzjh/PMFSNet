@@ -234,8 +234,9 @@ def main(seed=1777777, benchmark=False, deterministic=True):
         iou_df.to_excel(os.path.join(r"./files", dataset_name + "_iou.xlsx"))
 
 
-def calculate_p_value(file_path, base_model_name):
+def calculate_p_value(dataset_name, metric_name, base_model_name):
     # load df
+    file_path = os.path.join(r"./files", dataset_name + "_" + metric_name + ".xlsx")
     df = pd.read_excel(file_path, sheet_name='Sheet1')
 
     # extract base_model_name column
@@ -257,12 +258,15 @@ def calculate_p_value(file_path, base_model_name):
     for model_name, p_value in p_values.items():
         print(f"{model_name}: {p_value}")
 
+    # save p_value
+    p_value_df = pd.DataFrame(p_values)
+    p_value_df.to_excel(os.path.join(r"./files", dataset_name + "_" + metric_name + "_pvalue" + ".xlsx"))
 
 if __name__ == '__main__':
     # evaluate all metrics
     main(seed=1777777, benchmark=False, deterministic=True)
 
     # calculate p_value
-    # calculate_p_value(file_path=r"./files/ISIC-2018_dsc.xlsx", base_model_name="PMFSNet")
+    calculate_p_value(dataset_name="ISIC-2018", metric_name="dsc", base_model_name="PMFSNet")
 
 
