@@ -34,7 +34,7 @@ MLP_NORM = "LayerNorm_2"
 class DATransUNet(nn.Module):
     def __init__(self, img_size=224, num_classes=21843, zero_head=False, vis=False):
         super(DATransUNet, self).__init__()
-        config = get_r50_b16_config()
+        config = get_r50_b16_config(img_size=img_size)
         self.num_classes = num_classes
         self.zero_head = zero_head
         self.classifier = config.classifier
@@ -737,10 +737,10 @@ class DecoderCup(nn.Module):
         return x
 
 
-def get_b16_config():
+def get_b16_config(img_size=224):
     """Returns the ViT-B/16 configuration."""
     config = ml_collections.ConfigDict()
-    config.patches = ml_collections.ConfigDict({'size': (32, 32)})
+    config.patches = ml_collections.ConfigDict({'size': (img_size // 16, img_size // 16)})
     config.hidden_size = 768
     config.transformer = ml_collections.ConfigDict()
     config.transformer.mlp_dim = 3072
@@ -761,10 +761,10 @@ def get_b16_config():
     return config
 
 
-def get_r50_b16_config():
+def get_r50_b16_config(img_size=224):
     """Returns the Resnet50 + ViT-B/16 configuration."""
-    config = get_b16_config()
-    config.patches.grid = (32, 32)
+    config = get_b16_config(img_size=img_size)
+    config.patches.grid = (img_size // 16, img_size // 16)
     config.resnet = ml_collections.ConfigDict()
     config.resnet.num_layers = (3, 4, 9)
     config.resnet.width_factor = 1
