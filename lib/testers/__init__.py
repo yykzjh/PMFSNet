@@ -6,9 +6,9 @@
 @Version  :   1.0
 @License  :   (C)Copyright 2023
 """
-from .tooth_tester import ToothTester
-from .mmotu_tester import MMOTUTester
 from .isic_2018_tester import ISIC2018Tester
+from .mmotu_tester import MMOTUTester
+from .tooth_tester import ToothTester
 
 
 def get_tester(opt, model, metrics=None):
@@ -16,7 +16,7 @@ def get_tester(opt, model, metrics=None):
         tester = ToothTester(opt, model, metrics)
     elif opt["dataset_name"] == "MMOTU":
         tester = MMOTUTester(opt, model, metrics)
-    elif opt["dataset_name"] == "ISIC-2018":
+    elif opt["dataset_name"] == "ISIC-2018" or opt["dataset_name"] == "DRIVE" or opt["dataset_name"] == "STARE" or opt["dataset_name"] == "CHASE-DB1" or opt["dataset_name"] == "Kvasir-SEG":
         tester = ISIC2018Tester(opt, model, metrics)
     else:
         raise RuntimeError(f"No {opt['dataset_name']} dataset available when initialize tester")

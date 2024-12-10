@@ -6,9 +6,9 @@
 @Version  :   1.0
 @License  :   (C)Copyright 2023
 """
-from .tooth_trainer import ToothTrainer
-from .mmotu_trainer import MMOTUTrainer
 from .isic_2018_trainer import ISIC2018Trainer
+from .mmotu_trainer import MMOTUTrainer
+from .tooth_trainer import ToothTrainer
 
 
 def get_trainer(opt, train_loader, valid_loader, model, optimizer, lr_scheduler, loss_function, metric):
@@ -16,7 +16,7 @@ def get_trainer(opt, train_loader, valid_loader, model, optimizer, lr_scheduler,
         trainer = ToothTrainer(opt, train_loader, valid_loader, model, optimizer, lr_scheduler, loss_function, metric)
     elif opt["dataset_name"] == "MMOTU":
         trainer = MMOTUTrainer(opt, train_loader, valid_loader, model, optimizer, lr_scheduler, loss_function, metric)
-    elif opt["dataset_name"] == "ISIC-2018":
+    elif opt["dataset_name"] == "ISIC-2018" or opt["dataset_name"] == "DRIVE" or opt["dataset_name"] == "STARE" or opt["dataset_name"] == "CHASE-DB1" or opt["dataset_name"] == "Kvasir-SEG":
         trainer = ISIC2018Trainer(opt, train_loader, valid_loader, model, optimizer, lr_scheduler, loss_function, metric)
     else:
         raise RuntimeError(f"No {opt['dataset_name']} dataset available when initialize trainer")

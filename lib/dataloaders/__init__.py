@@ -8,9 +8,10 @@
 """
 from torch.utils.data import DataLoader
 
-from .ToothDataset import ToothDataset
-from .MMOTUDataset import MMOTUDataset
 from .ISIC2018Dataset import ISIC2018Dataset
+from .MMOTUDataset import MMOTUDataset
+from .RevisionDataset import RevisionDataset
+from .ToothDataset import ToothDataset
 
 
 def get_dataloader(opt):
@@ -40,6 +41,12 @@ def get_dataloader(opt):
 
         train_loader = DataLoader(train_set, batch_size=opt["batch_size"], shuffle=True, num_workers=opt["num_workers"], pin_memory=True)
         valid_loader = DataLoader(valid_set, batch_size=opt["batch_size"], shuffle=False, num_workers=opt["num_workers"], pin_memory=True)
+    elif opt["dataset_name"] == "DRIVE" or opt["dataset_name"] == "STARE" or opt["dataset_name"] == "CHASE-DB1" or opt["dataset_name"] == "Kvasir-SEG":
+        train_set = RevisionDataset(opt, mode="train")
+        valid_set = RevisionDataset(opt, mode="valid")
+
+        train_loader = DataLoader(train_set, batch_size=opt["batch_size"], shuffle=True, num_workers=opt["num_workers"], pin_memory=True)
+        valid_loader = DataLoader(valid_set, batch_size=opt["batch_size"], shuffle=False, num_workers=opt["num_workers"], pin_memory=True)
 
     else:
         raise RuntimeError(f"No {opt['dataset_name']} dataloader available")
@@ -65,6 +72,10 @@ def get_test_dataloader(opt):
 
     elif opt["dataset_name"] == "ISIC-2018":
         valid_set = ISIC2018Dataset(opt, mode="valid")
+        valid_loader = DataLoader(valid_set, batch_size=opt["batch_size"], shuffle=False, num_workers=1, pin_memory=True)
+
+    elif opt["dataset_name"] == "DRIVE" or opt["dataset_name"] == "STARE" or opt["dataset_name"] == "CHASE-DB1" or opt["dataset_name"] == "Kvasir-SEG":
+        valid_set = RevisionDataset(opt, mode="valid")
         valid_loader = DataLoader(valid_set, batch_size=opt["batch_size"], shuffle=False, num_workers=1, pin_memory=True)
 
     else:

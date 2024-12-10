@@ -6,15 +6,12 @@ sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../
 import torch
 import torch.nn as nn
 
-from lib.models.modules.modules import conv_block, UpCat, UpCatconv, UnetDsv3, UnetGridGatingSignal3
-from lib.models.modules.grid_attention_layer import GridAttentionBlock2D, MultiAttentionBlock
+from lib.models.modules.modules import conv_block, UpCat, UnetDsv3
+from lib.models.modules.grid_attention_layer import MultiAttentionBlock
 from lib.models.modules.channel_attention_layer import SE_Conv_Block
 from lib.models.modules.scale_attention_layer import scale_atten_convblock
 from lib.models.modules.nonlocal_layer import NONLocalBlock2D
-import numpy as np
 from scipy import ndimage
-
-from lib.models.modules.GlobalPMFSBlock import GlobalPMFSBlock_AP_Separate
 
 
 class Comprehensive_Atten_Unet(nn.Module):
@@ -69,10 +66,10 @@ class Comprehensive_Atten_Unet(nn.Module):
         self.up_concat3 = UpCat(filters[3], filters[2], self.is_deconv)
         self.up_concat2 = UpCat(filters[2], filters[1], self.is_deconv)
         self.up_concat1 = UpCat(filters[1], filters[0], self.is_deconv)
-        self.up4 = SE_Conv_Block(filters[4], filters[3], drop_out=True)
-        self.up3 = SE_Conv_Block(filters[3], filters[2])
-        self.up2 = SE_Conv_Block(filters[2], filters[1])
-        self.up1 = SE_Conv_Block(filters[1], filters[0])
+        self.up4 = SE_Conv_Block(filters[4], filters[3], reshape_size=out_size[0], drop_out=True)
+        self.up3 = SE_Conv_Block(filters[3], filters[2], reshape_size=out_size[0])
+        self.up2 = SE_Conv_Block(filters[2], filters[1], reshape_size=out_size[0])
+        self.up1 = SE_Conv_Block(filters[1], filters[0], reshape_size=out_size[0])
 
         # deep supervision
         self.dsv4 = UnetDsv3(in_size=filters[3], out_size=4, scale_factor=self.out_size)

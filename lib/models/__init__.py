@@ -6,46 +6,43 @@
 @Version  :   1.0
 @License  :   (C)Copyright 2023
 """
-import torch
 import torch.optim as optim
+from monai.networks.nets import AttentionUnet
+from monai.networks.nets import UNETR, SwinUNETR
 
 import lib.utils as utils
-
+from lib.models.UXNet_3D.network_backbone import UXNET
+from lib.models.nnFormer.nnFormer_seg import nnFormer
+from .AttU_Net import AttU_Net
+from .AttentionUNet3D import AttentionUNet3D
+from .BCDUNet import BCDUNet
+from .BiSeNetV2 import BiSeNetV2
+from .CANet import Comprehensive_Atten_Unet
+from .CENet import CE_Net
+from .CKDNet import DeepLab_Aux
+from .CPFNet import CPF_Net
+from .DANet import DANet
+from .DATransUNet import DATransUNet
+from .DenseASPPUNet import DenseASPPUNet
 from .DenseVNet import DenseVNet
+from .DenseVoxelNet import DenseVoxelNet
+from .HighResNet3D import HighResNet3D
+from .MedT import MedT
+from .MobileNetV2 import MobileNetV2
+from .MsRED import Ms_red_v1, Ms_red_v2
+from .MultiResUNet3D import MultiResUNet3D
+from .PMFSNet import PMFSNet
+from .PSPNet import PSPNet
+from .R2AttentionUNet import R2AttentionU_Net
+from .R2UNet import R2U_Net
+from .SegFormer import SegFormer
+from .SwinUnet import SwinUnet
+from .TransBTS import BTS
+from .TransUNet import CONFIGS as CONFIGS_ViT_seg
+from .TransUNet import TransUNet
+from .UNet import UNet
 from .UNet3D import UNet3D
 from .VNet import VNet
-from .AttentionUNet3D import AttentionUNet3D
-from .R2UNet import R2U_Net
-from .R2AttentionUNet import R2AttentionU_Net
-from .HighResNet3D import HighResNet3D
-from .DenseVoxelNet import DenseVoxelNet
-from .MultiResUNet3D import MultiResUNet3D
-from .DenseASPPUNet import DenseASPPUNet
-from .TransBTS import BTS
-from monai.networks.nets import UNETR, SwinUNETR
-from lib.models.nnFormer.nnFormer_seg import nnFormer
-from lib.models.UXNet_3D.network_backbone import UXNET
-from monai.networks.nets import AttentionUnet
-
-from .PSPNet import PSPNet
-from .DANet import DANet
-from .SegFormer import SegFormer
-from .UNet import UNet
-from .TransUNet import TransUNet
-from .TransUNet import CONFIGS as CONFIGS_ViT_seg
-from .BiSeNetV2 import BiSeNetV2
-from .MedT import MedT
-
-from .AttU_Net import AttU_Net
-from .CANet import Comprehensive_Atten_Unet
-from .BCDUNet import BCDUNet
-from .CENet import CE_Net
-from .CPFNet import CPF_Net
-from .CKDNet import DeepLab_Aux
-from .MsRED import Ms_red_v1, Ms_red_v2
-from .MobileNetV2 import MobileNetV2
-
-from .PMFSNet import PMFSNet
 
 
 def get_model_optimizer_lr_scheduler(opt):
@@ -173,7 +170,7 @@ def get_model_optimizer_lr_scheduler(opt):
         else:
             raise RuntimeError(f"No {opt['model_name']} model available on {opt['dataset_name']} dataset")
 
-    elif opt["dataset_name"] == "ISIC-2018":
+    elif opt["dataset_name"] == "ISIC-2018" or opt["dataset_name"] == "DRIVE" or opt["dataset_name"] == "STARE" or opt["dataset_name"] == "CHASE-DB1" or opt["dataset_name"] == "Kvasir-SEG":
         if opt["model_name"] == "PMFSNet":
             model = PMFSNet(in_channels=opt["in_channels"], out_channels=opt["classes"], dim=opt["dimension"], scaling_version=opt["scaling_version"])
 
@@ -203,6 +200,12 @@ def get_model_optimizer_lr_scheduler(opt):
 
         elif opt["model_name"] == "AttU_Net":
             model = AttU_Net(img_ch=opt["in_channels"], output_ch=opt["classes"])
+
+        elif opt["model_name"] == "SwinUnet":
+            model = SwinUnet(img_size=opt["resize_shape"][0], num_classes=opt["classes"])
+
+        elif opt["model_name"] == "DATransUNet":
+            model = DATransUNet(img_size=opt["resize_shape"][0], num_classes=opt["classes"])
 
         else:
             raise RuntimeError(f"No {opt['model_name']} model available on {opt['dataset_name']} dataset")
@@ -396,7 +399,7 @@ def get_model(opt):
         else:
             raise RuntimeError(f"No {opt['model_name']} model available on {opt['dataset_name']} dataset")
 
-    elif opt["dataset_name"] == "ISIC-2018":
+    elif opt["dataset_name"] == "ISIC-2018" or opt["dataset_name"] == "DRIVE" or opt["dataset_name"] == "STARE" or opt["dataset_name"] == "CHASE-DB1" or opt["dataset_name"] == "Kvasir-SEG":
         if opt["model_name"] == "PMFSNet":
             model = PMFSNet(in_channels=opt["in_channels"], out_channels=opt["classes"], dim=opt["dimension"], scaling_version=opt["scaling_version"])
 
@@ -426,6 +429,12 @@ def get_model(opt):
 
         elif opt["model_name"] == "AttU_Net":
             model = AttU_Net(img_ch=opt["in_channels"], output_ch=opt["classes"])
+
+        elif opt["model_name"] == "SwinUnet":
+            model = SwinUnet(img_size=opt["resize_shape"][0], num_classes=opt["classes"])
+
+        elif opt["model_name"] == "DATransUNet":
+            model = DATransUNet(img_size=opt["resize_shape"][0], num_classes=opt["classes"])
 
         else:
             raise RuntimeError(f"No {opt['model_name']} model available on {opt['dataset_name']} dataset")

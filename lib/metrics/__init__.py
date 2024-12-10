@@ -6,9 +6,9 @@
 @Version  :   1.0
 @License  :   (C)Copyright 2023
 """
-from lib.metrics import Tooth
-from lib.metrics import MMOTU
 from lib.metrics import ISIC2018
+from lib.metrics import MMOTU
+from lib.metrics import Tooth
 
 
 def get_metric(opt):
@@ -48,7 +48,7 @@ def get_metric(opt):
             else:
                 raise RuntimeError(f"No {metric_name} metric available on {opt['dataset_name']} dataset")
 
-    elif opt["dataset_name"] == "ISIC-2018":
+    elif opt["dataset_name"] == "ISIC-2018" or opt["dataset_name"] == "DRIVE" or opt["dataset_name"] == "STARE" or opt["dataset_name"] == "CHASE-DB1" or opt["dataset_name"] == "Kvasir-SEG":
         metrics = {}
         for metric_name in opt["metric_names"]:
             if metric_name == "DSC":

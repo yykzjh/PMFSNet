@@ -238,36 +238,36 @@ def calculate_p_value(dataset_name, metric_name, base_model_name):
     # load df
     file_path = os.path.join(r"./files", dataset_name + "_" + metric_name + ".xlsx")
     df = pd.read_excel(file_path, sheet_name='Sheet1')
+    df = df.drop(df.columns[0], axis=1)
 
     # extract base_model_name column
     base_model_scores = df[base_model_name]
 
     # define p_value dict
     p_values = {}
-
     # paired t-test for each of the other model columns
     for model_name in df.columns:
         # exclude base_model_name
         if model_name != base_model_name:
             model_scores = df[model_name]
             t_stat, p_value = stats.ttest_rel(model_scores, base_model_scores)
-            p_values[model_name] = p_value
+            p_values[model_name] = [p_value]
 
     # print p_value
-    print("p-values relative to {}:".format(base_model_scores))
+    print("p-values relative to {}:".format(base_model_name))
     for model_name, p_value in p_values.items():
         print(f"{model_name}: {p_value}")
 
     # save p_value
-    p_value_df = pd.DataFrame(p_values)
+    p_value_df = pd.DataFrame.from_dict(p_values)
     p_value_df.to_excel(os.path.join(r"./files", dataset_name + "_" + metric_name + "_pvalue" + ".xlsx"))
 
 
 if __name__ == '__main__':
     # evaluate all metrics
-    main(seed=1777777, benchmark=False, deterministic=True)
+    # main(seed=1777777, benchmark=False, deterministic=True)
 
     # calculate p_value
-    # calculate_p_value(dataset_name="ISIC-2018", metric_name="dsc", base_model_name="PMFSNet")
+    calculate_p_value(dataset_name="3D-CBCT-Tooth", metric_name="iou", base_model_name="PMFSNet")
 
 
