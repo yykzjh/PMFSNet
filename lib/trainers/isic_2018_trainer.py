@@ -1,12 +1,10 @@
-import os
-import time
-import numpy as np
 import datetime
+import os
 
 import nni
+import numpy as np
 import torch
 import torch.optim as optim
-from torch.utils.tensorboard import SummaryWriter
 
 from lib import utils
 
@@ -26,6 +24,7 @@ class ISIC2018Trainer:
         self.lr_scheduler = lr_scheduler
         self.loss_function = loss_function
         self.metric = metric
+        self.best_metrics = ""
         self.device = opt["device"]
 
         if not self.opt["optimize_params"]:
@@ -39,7 +38,8 @@ class ISIC2018Trainer:
             if self.opt["resume"] is None:
                 utils.make_dirs(self.checkpoint_dir)
                 utils.make_dirs(self.tensorboard_dir)
-            utils.pre_write_txt("Complete the initialization of model:{}, optimizer:{}, and lr_scheduler:{}".format(self.opt["model_name"], self.opt["optimizer_name"], self.opt["lr_scheduler_name"]), self.log_txt_path)
+            utils.pre_write_txt("Complete the initialization of model:{}, optimizer:{}, and lr_scheduler:{}".format(self.opt["model_name"], self.opt["optimizer_name"], self.opt["lr_scheduler_name"]),
+                                self.log_txt_path)
 
         self.start_epoch = self.opt["start_epoch"]
         self.end_epoch = self.opt["end_epoch"]
@@ -57,7 +57,7 @@ class ISIC2018Trainer:
 
             self.train_epoch(epoch)
 
-            self.valid_epoch(epoch)
+            update_flag = self.valid_epoch(epoch)
 
             train_class_IoU = self.statistics_dict["train"]["total_area_intersect"] / self.statistics_dict["train"]["total_area_union"]
             train_class_IoU = np.nan_to_num(train_class_IoU)
@@ -72,7 +72,7 @@ class ISIC2018Trainer:
             else:
                 self.lr_scheduler.step()
 
-            print(
+            print_str = (
                 "[{}]  epoch:[{:05d}/{:05d}]  lr:{:.6f}  train_loss:{:.6f}  train_DSC:{:.6f}  train_IoU:{:.6f}  train_ACC:{:.6f}  train_JI:{:.6f}  valid_DSC:{:.6f}  valid_IoU:{:.6f}  valid_ACC:{:.6f}  valid_JI:{:.6f}  best_JI:{:.6f}"
                 .format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                         epoch, self.end_epoch - 1,
@@ -87,28 +87,21 @@ class ISIC2018Trainer:
                         valid_ACC,
                         valid_JI,
                         self.best_metric))
+
+            if update_flag:
+                self.best_metrics = print_str
+
+            print(print_str)
             if not self.opt["optimize_params"]:
-                utils.pre_write_txt(
-                    "[{}]  epoch:[{:05d}/{:05d}]  lr:{:.6f}  train_loss:{:.6f}  train_DSC:{:.6f}  train_IoU:{:.6f}  train_ACC:{:.6f}  train_JI:{:.6f}  valid_DSC:{:.6f}  valid_IoU:{:.6f}  valid_ACC:{:.6f}  valid_JI:{:.6f}  best_JI:{:.6f}"
-                    .format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                            epoch, self.end_epoch - 1,
-                            self.optimizer.param_groups[0]['lr'],
-                            self.statistics_dict["train"]["loss"] / self.statistics_dict["train"]["count"],
-                            self.statistics_dict["train"]["DSC_sum"] / self.statistics_dict["train"]["count"],
-                            train_class_IoU[1],
-                            self.statistics_dict["train"]["ACC_sum"] / self.statistics_dict["train"]["count"],
-                            self.statistics_dict["train"]["JI_sum"] / self.statistics_dict["train"]["count"],
-                            valid_dsc,
-                            valid_class_IoU[1],
-                            valid_ACC,
-                            valid_JI,
-                            self.best_metric), self.log_txt_path)
+                utils.pre_write_txt(print_str, self.log_txt_path)
 
             if self.opt["optimize_params"]:
                 nni.report_intermediate_result(valid_JI)
 
         if self.opt["optimize_params"]:
             nni.report_final_result(self.best_metric)
+        else:
+            utils.pre_write_txt("\n" + self.best_metrics, self.log_txt_path)
 
     def train_epoch(self, epoch):
 
@@ -166,14 +159,17 @@ class ISIC2018Trainer:
 
             cur_JI = self.statistics_dict["valid"]["JI_sum"] / self.statistics_dict["valid"]["count"]
 
+            update_flag = False
             if (not self.opt["optimize_params"]) and (epoch + 1) % self.save_epoch_freq == 0:
                 self.save(epoch, cur_JI, self.best_metric, type="normal")
             if not self.opt["optimize_params"]:
                 self.save(epoch, cur_JI, self.best_metric, type="latest")
             if cur_JI > self.best_metric:
+                update_flag = True
                 self.best_metric = cur_JI
                 if not self.opt["optimize_params"]:
                     self.save(epoch, cur_JI, self.best_metric, type="best")
+            return update_flag
 
     def calculate_metric_and_update_statistcs(self, output, target, cur_batch_size, loss=None, mode="train"):
         mask = torch.zeros(self.opt["classes"])
