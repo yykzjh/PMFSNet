@@ -174,6 +174,198 @@ params_ISIC_2018 = {
     "save_epoch_freq": 50,
 }
 
+params_DRIVE = {
+    # ——————————————————————————————————————————————     Launch Initialization    ———————————————————————————————————————————————————
+    "CUDA_VISIBLE_DEVICES": "0",
+    "seed": 1777777,
+    "cuda": True,
+    "benchmark": False,
+    "deterministic": True,
+    # —————————————————————————————————————————————     Preprocessing       ————————————————————————————————————————————————————
+    "resize_shape": (512, 512),
+    # ——————————————————————————————————————————————    Data Augmentation    ——————————————————————————————————————————————————————
+    "augmentation_p": 0.31154673834507396,
+    "color_jitter": 0.20193812578236442,
+    "random_rotation_angle": 45,
+    "normalize_means": (0.16155026, 0.26819696, 0.50784565),
+    "normalize_stds": (0.10571646, 0.18532471, 0.35080457),
+    # —————————————————————————————————————————————    Data Loading     ——————————————————————————————————————————————————————
+    "dataset_name": "DRIVE",
+    "dataset_path": r"./datasets/DRIVE",
+    "batch_size": 2,
+    "num_workers": 2,
+    # —————————————————————————————————————————————    Model     ——————————————————————————————————————————————————————
+    "model_name": "PMFSNet",
+    "in_channels": 3,
+    "classes": 2,
+    "index_to_class_dict":
+    {
+        0: "background",
+        1: "foreground"
+    },
+    "resume": None,
+    "pretrain": None,
+    # ——————————————————————————————————————————————    Optimizer     ——————————————————————————————————————————————————————
+    "optimizer_name": "AdamW",
+    "learning_rate": 0.005,
+    "weight_decay": 0.001,
+    "momentum": 0.705859940948433,
+    # ———————————————————————————————————————————    Learning Rate Scheduler     —————————————————————————————————————————————————————
+    "lr_scheduler_name": "CosineAnnealingWarmRestarts",
+    "gamma": 0.9251490005593288,
+    "step_size": 10,
+    "milestones": [1, 3, 5, 7, 8, 9],
+    "T_max": 50,
+    "T_0": 10,
+    "T_mult": 4,
+    "mode": "max",
+    "patience": 5,
+    "factor": 0.8,
+    # ————————————————————————————————————————————    Loss And Metric     ———————————————————————————————————————————————————————
+    "metric_names": ["DSC", "IoU", "JI", "ACC"],
+    "loss_function_name": "DiceLoss",
+    "class_weight": [0.08631576554733908, 0.913684234452661],
+    "sigmoid_normalization": False,
+    "dice_loss_mode": "extension",
+    "dice_mode": "standard",
+    # —————————————————————————————————————————————   Training   ——————————————————————————————————————————————————————
+    "optimize_params": False,
+    "run_dir": r"./runs",
+    "start_epoch": 0,
+    "end_epoch": 200,
+    "best_metric": 0,
+    "terminal_show_freq": 5,
+    "save_epoch_freq": 50,
+}
+
+params_STARE = {
+    # ——————————————————————————————————————————————     Launch Initialization    ———————————————————————————————————————————————————
+    "CUDA_VISIBLE_DEVICES": "0",
+    "seed": 1777777,
+    "cuda": True,
+    "benchmark": False,
+    "deterministic": True,
+    # —————————————————————————————————————————————     Preprocessing       ————————————————————————————————————————————————————
+    "resize_shape": (512, 512),
+    # ——————————————————————————————————————————————    Data Augmentation    ——————————————————————————————————————————————————————
+    "augmentation_p": 0.31154673834507396,
+    "color_jitter": 0.20193812578236442,
+    "random_rotation_angle": 45,
+    "normalize_means": (0.11336552, 0.33381058, 0.58892505),
+    "normalize_stds": (0.10905356, 0.19210595, 0.35295892),
+    # —————————————————————————————————————————————    Data Loading     ——————————————————————————————————————————————————————
+    "dataset_name": "STARE",
+    "dataset_path": r"./datasets/STARE",
+    "batch_size": 2,
+    "num_workers": 2,
+    # —————————————————————————————————————————————    Model     ——————————————————————————————————————————————————————
+    "model_name": "PMFSNet",
+    "in_channels": 3,
+    "classes": 2,
+    "index_to_class_dict":
+    {
+        0: "background",
+        1: "foreground"
+    },
+    "resume": None,
+    "pretrain": None,
+    # ——————————————————————————————————————————————    Optimizer     ——————————————————————————————————————————————————————
+    "optimizer_name": "AdamW",
+    "learning_rate": 0.005,
+    "weight_decay": 0.001,
+    "momentum": 0.705859940948433,
+    # ———————————————————————————————————————————    Learning Rate Scheduler     —————————————————————————————————————————————————————
+    "lr_scheduler_name": "CosineAnnealingWarmRestarts",
+    "gamma": 0.9251490005593288,
+    "step_size": 10,
+    "milestones": [1, 3, 5, 7, 8, 9],
+    "T_max": 50,
+    "T_0": 10,
+    "T_mult": 4,
+    "mode": "max",
+    "patience": 5,
+    "factor": 0.8,
+    # ————————————————————————————————————————————    Loss And Metric     ———————————————————————————————————————————————————————
+    "metric_names": ["DSC", "IoU", "JI", "ACC"],
+    "loss_function_name": "DiceLoss",
+    "class_weight": [0.07542384887839432, 0.9245761511216056],
+    "sigmoid_normalization": False,
+    "dice_loss_mode": "extension",
+    "dice_mode": "standard",
+    # —————————————————————————————————————————————   Training   ——————————————————————————————————————————————————————
+    "optimize_params": False,
+    "run_dir": r"./runs",
+    "start_epoch": 0,
+    "end_epoch": 200,
+    "best_metric": 0,
+    "terminal_show_freq": 2,
+    "save_epoch_freq": 50,
+}
+
+params_CHASE_DB1 = {
+    # ——————————————————————————————————————————————     Launch Initialization    ———————————————————————————————————————————————————
+    "CUDA_VISIBLE_DEVICES": "0",
+    "seed": 1777777,
+    "cuda": True,
+    "benchmark": False,
+    "deterministic": True,
+    # —————————————————————————————————————————————     Preprocessing       ————————————————————————————————————————————————————
+    "resize_shape": (512, 512),
+    # ——————————————————————————————————————————————    Data Augmentation    ——————————————————————————————————————————————————————
+    "augmentation_p": 0.31154673834507396,
+    "color_jitter": 0.20193812578236442,
+    "random_rotation_angle": 45,
+    "normalize_means": (0.02789665, 0.16392259, 0.45287978),
+    "normalize_stds": (0.03700363, 0.14539037, 0.36542216),
+    # —————————————————————————————————————————————    Data Loading     ——————————————————————————————————————————————————————
+    "dataset_name": "CHASE-DB1",
+    "dataset_path": r"./datasets/CHASE-DB1",
+    "batch_size": 2,
+    "num_workers": 2,
+    # —————————————————————————————————————————————    Model     ——————————————————————————————————————————————————————
+    "model_name": "PMFSNet",
+    "in_channels": 3,
+    "classes": 2,
+    "index_to_class_dict":
+    {
+        0: "background",
+        1: "foreground"
+    },
+    "resume": None,
+    "pretrain": None,
+    # ——————————————————————————————————————————————    Optimizer     ——————————————————————————————————————————————————————
+    "optimizer_name": "AdamW",
+    "learning_rate": 0.005,
+    "weight_decay": 0.001,
+    "momentum": 0.705859940948433,
+    # ———————————————————————————————————————————    Learning Rate Scheduler     —————————————————————————————————————————————————————
+    "lr_scheduler_name": "CosineAnnealingWarmRestarts",
+    "gamma": 0.9251490005593288,
+    "step_size": 10,
+    "milestones": [1, 3, 5, 7, 8, 9],
+    "T_max": 50,
+    "T_0": 10,
+    "T_mult": 4,
+    "mode": "max",
+    "patience": 5,
+    "factor": 0.8,
+    # ————————————————————————————————————————————    Loss And Metric     ———————————————————————————————————————————————————————
+    "metric_names": ["DSC", "IoU", "JI", "ACC"],
+    "loss_function_name": "DiceLoss",
+    "class_weight": [0.07186707540874207, 0.928132924591258],
+    "sigmoid_normalization": False,
+    "dice_loss_mode": "extension",
+    "dice_mode": "standard",
+    # —————————————————————————————————————————————   Training   ——————————————————————————————————————————————————————
+    "optimize_params": False,
+    "run_dir": r"./runs",
+    "start_epoch": 0,
+    "end_epoch": 200,
+    "best_metric": 0,
+    "terminal_show_freq": 5,
+    "save_epoch_freq": 50,
+}
+
 
 def run(params, dataset_ind, dataset_total, model_ind, model_total):
     # print current dataset and model
@@ -195,13 +387,6 @@ def run(params, dataset_ind, dataset_total, model_ind, model_total):
 def main(datasets_list, models_list, seed=1777777, benchmark=False, deterministic=True):
     # launch initialization
     utils.reproducibility(seed, deterministic, benchmark)
-    # define datasets
-    datasets_list = ["3D-CBCT-Tooth", "ISIC-2018"]
-    # define the corresponding models
-    models_list = [
-        ["UNet3D", "DenseVNet", "AttentionUNet3D", "DenseVoxelNet", "MultiResUNet3D", "UNETR", "SwinUNETR", "TransBTS", "nnFormer", "3DUXNet", "PMFSNet"],
-        ["UNet", "AttU_Net", "CANet", "BCDUNet", "CENet", "CPFNet", "CKDNet", "PMFSNet"]
-    ]
 
     # traverse all datasets in turn
     for dataset_ind, dataset_name in enumerate(datasets_list):
@@ -213,15 +398,26 @@ def main(datasets_list, models_list, seed=1777777, benchmark=False, deterministi
             # select the dictionary of hyperparameters used for training
             if dataset_name == "3D-CBCT-Tooth":
                 params = params_3D_CBCT_Tooth
+                pretrain_dataset_name = "Tooth"
             elif dataset_name == "ISIC-2018":
                 params = params_ISIC_2018
+                pretrain_dataset_name = "ISIC2018"
+            elif dataset_name == "DRIVE":
+                params = params_DRIVE
+                pretrain_dataset_name = dataset_name
+            elif dataset_name == "STARE":
+                params = params_STARE
+                pretrain_dataset_name = dataset_name
+            elif dataset_name == "CHASE-DB1":
+                params = params_CHASE_DB1
+                pretrain_dataset_name = dataset_name
             else:
                 raise RuntimeError(f"No {dataset_name} dataset available")
             # update the dictionary of hyperparameters used for training
             params["dataset_name"] = dataset_name
             params["dataset_path"] = os.path.join(r"./datasets", ("NC-release-data-checked" if dataset_name == "3D-CBCT-Tooth" else dataset_name))
             params["model_name"] = model_name
-            params["pretrain"] = os.path.join(r"./pretrain", ("Tooth_" if dataset_name == "3D-CBCT-Tooth" else "ISIC2018_") + model_name + ".pth")
+            params["pretrain"] = os.path.join(r"./pretrain", pretrain_dataset_name + "_" + model_name + ".pth")
             # calculate the dsc and iou of all images in test set
             dsc_list, iou_list = run(params, dataset_ind + 1, len(datasets_list), model_ind + 1, len(models_list[dataset_ind]))
             dsc_dict[model_name] = dsc_list
