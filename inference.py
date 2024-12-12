@@ -57,6 +57,8 @@ params_3D_CBCT_Tooth = {
     "model_name": "PMFSNet",
     "in_channels": 1,
     "classes": 2,
+    "scaling_version": "TINY",
+    "dimension": "3d",
     "index_to_class_dict":
         {
             0: "background",
@@ -125,6 +127,8 @@ params_MMOTU = {
     "model_name": "PMFSNet",
     "in_channels": 3,
     "classes": 2,
+    "scaling_version": "BASIC",
+    "dimension": "2d",
     "index_to_class_dict":
         {
             0: "background",
@@ -189,6 +193,8 @@ params_ISIC_2018 = {
     "model_name": "PMFSNet",
     "in_channels": 3,
     "classes": 2,
+    "scaling_version": "BASIC",
+    "dimension": "2d",
     "index_to_class_dict":
         {
             0: "background",

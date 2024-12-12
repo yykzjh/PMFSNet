@@ -58,6 +58,8 @@ params_3D_CBCT_Tooth = {
     "model_name": "PMFSNet",
     "in_channels": 1,
     "classes": 2,
+    "scaling_version": "TINY",
+    "dimension": "3d",
     "index_to_class_dict":
     {
         0: "background",
@@ -126,6 +128,8 @@ params_MMOTU = {
     "model_name": "PMFSNet",
     "in_channels": 3,
     "classes": 2,
+    "scaling_version": "BASIC",
+    "dimension": "2d",
     "index_to_class_dict":
     {
         0: "background",
@@ -190,6 +194,8 @@ params_ISIC_2018 = {
     "model_name": "PMFSNet",
     "in_channels": 3,
     "classes": 2,
+    "scaling_version": "BASIC",
+    "dimension": "2d",
     "index_to_class_dict":
     {
         0: "background",
@@ -254,6 +260,8 @@ params_DRIVE = {
     "model_name": "PMFSNet",
     "in_channels": 3,
     "classes": 2,
+    "scaling_version": "BASIC",
+    "dimension": "2d",
     "index_to_class_dict":
     {
         0: "background",
@@ -318,6 +326,8 @@ params_STARE = {
     "model_name": "PMFSNet",
     "in_channels": 3,
     "classes": 2,
+    "scaling_version": "BASIC",
+    "dimension": "2d",
     "index_to_class_dict":
     {
         0: "background",
@@ -382,6 +392,8 @@ params_CHASE_DB1 = {
     "model_name": "PMFSNet",
     "in_channels": 3,
     "classes": 2,
+    "scaling_version": "BASIC",
+    "dimension": "2d",
     "index_to_class_dict":
     {
         0: "background",
@@ -432,8 +444,8 @@ params_Kvasir_SEG = {
     # —————————————————————————————————————————————     Preprocessing       ————————————————————————————————————————————————————
     "resize_shape": (224, 224),
     # ——————————————————————————————————————————————    Data Augmentation    ——————————————————————————————————————————————————————
-    "augmentation_p": 0.12097393901893663,
-    "color_jitter": 0.4203933474361258,
+    "augmentation_p": 0.22448543324157222,
+    "color_jitter": 0.3281010563062837,
     "random_rotation_angle": 30,
     "normalize_means": (0.24398195, 0.32772844, 0.56273),
     "normalize_stds": (0.18945072, 0.2217485, 0.31491405),
@@ -446,6 +458,8 @@ params_Kvasir_SEG = {
     "model_name": "PMFSNet",
     "in_channels": 3,
     "classes": 2,
+    "scaling_version": "BASIC",
+    "dimension": "2d",
     "index_to_class_dict":
     {
         0: "background",
@@ -454,21 +468,21 @@ params_Kvasir_SEG = {
     "resume": None,
     "pretrain": None,
     # ——————————————————————————————————————————————    Optimizer     ——————————————————————————————————————————————————————
-    "optimizer_name": "AdamW",
-    "learning_rate": 0.01,
-    "weight_decay": 0.00001,
-    "momentum": 0.7725414416309884,
+    "optimizer_name": "Adam",
+    "learning_rate": 0.0005,
+    "weight_decay": 0.000001,
+    "momentum": 0.7781834740942233,
     # ———————————————————————————————————————————    Learning Rate Scheduler     —————————————————————————————————————————————————————
-    "lr_scheduler_name": "CosineAnnealingLR",
-    "gamma": 0.8689275449032848,
-    "step_size": 5,
+    "lr_scheduler_name": "ReduceLROnPlateau",
+    "gamma": 0.8079569870480704,
+    "step_size": 20,
     "milestones": [10, 30, 60, 100, 120, 140, 160, 170],
-    "T_max": 50,
+    "T_max": 20,
     "T_0": 10,
-    "T_mult": 5,
+    "T_mult": 2,
     "mode": "max",
-    "patience": 1,
-    "factor": 0.97,
+    "patience": 5,
+    "factor": 0.5,
     # ————————————————————————————————————————————    Loss And Metric     ———————————————————————————————————————————————————————
     "metric_names": ["DSC", "IoU", "JI", "ACC"],
     "loss_function_name": "DiceLoss",
@@ -477,10 +491,10 @@ params_Kvasir_SEG = {
     "dice_loss_mode": "extension",
     "dice_mode": "standard",
     # —————————————————————————————————————————————   Training   ——————————————————————————————————————————————————————
-    "optimize_params": True,
+    "optimize_params": False,
     "run_dir": r"./runs",
     "start_epoch": 0,
-    "end_epoch": 100,
+    "end_epoch": 500,
     "best_metric": 0,
     "terminal_show_freq": 8,
     "save_epoch_freq": 150,

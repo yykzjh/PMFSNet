@@ -199,6 +199,8 @@ params_DRIVE = {
     "model_name": "PMFSNet",
     "in_channels": 3,
     "classes": 2,
+    "scaling_version": "BASIC",
+    "dimension": "2d",
     "index_to_class_dict":
     {
         0: "background",
@@ -264,6 +266,8 @@ params_STARE = {
     "model_name": "PMFSNet",
     "in_channels": 3,
     "classes": 2,
+    "scaling_version": "BASIC",
+    "dimension": "2d",
     "index_to_class_dict":
     {
         0: "background",
@@ -329,6 +333,8 @@ params_CHASE_DB1 = {
     "model_name": "PMFSNet",
     "in_channels": 3,
     "classes": 2,
+    "scaling_version": "BASIC",
+    "dimension": "2d",
     "index_to_class_dict":
     {
         0: "background",
@@ -473,6 +479,6 @@ if __name__ == '__main__':
         seed=1777777, benchmark=False, deterministic=True)
 
     # calculate p_value
-    calculate_p_value(dataset_name="3D-CBCT-Tooth", metric_name="iou", base_model_name="PMFSNet")
+    # calculate_p_value(dataset_name="3D-CBCT-Tooth", metric_name="iou", base_model_name="PMFSNet")
 
 
