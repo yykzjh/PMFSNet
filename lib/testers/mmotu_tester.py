@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 """
 @author   :   yykzjh    
-@Contact  :   1378453948@qq.com
+@Contact  :   yykzhjh@163.com
 @DateTime :   2024/01/01 00:33
 @Version  :   1.0
 @License  :   (C)Copyright 2024
