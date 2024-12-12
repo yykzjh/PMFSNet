@@ -192,7 +192,7 @@ def run(params, dataset_ind, dataset_total, model_ind, model_total):
     return tester.evaluate_all_metrics(valid_loader)
 
 
-def main(seed=1777777, benchmark=False, deterministic=True):
+def main(datasets_list, models_list, seed=1777777, benchmark=False, deterministic=True):
     # launch initialization
     utils.reproducibility(seed, deterministic, benchmark)
     # define datasets
@@ -265,7 +265,13 @@ def calculate_p_value(dataset_name, metric_name, base_model_name):
 
 if __name__ == '__main__':
     # evaluate all metrics
-    # main(seed=1777777, benchmark=False, deterministic=True)
+    main(datasets_list=["DRIVE", "STARE", "CHASE-DB1"],
+         models_list=[
+             ["UNet", "AttU_Net", "CANet", "CENet", "CPFNet", "CKDNet", "SwinUnet", "DATransUNet", "PMFSNet"],
+             ["UNet", "AttU_Net", "CANet", "CENet", "CPFNet", "CKDNet", "SwinUnet", "DATransUNet", "PMFSNet"],
+             ["UNet", "AttU_Net", "CANet", "CENet", "CPFNet", "CKDNet", "SwinUnet", "DATransUNet", "PMFSNet"]
+         ],
+        seed=1777777, benchmark=False, deterministic=True)
 
     # calculate p_value
     calculate_p_value(dataset_name="3D-CBCT-Tooth", metric_name="iou", base_model_name="PMFSNet")

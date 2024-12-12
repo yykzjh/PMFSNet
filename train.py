@@ -477,10 +477,10 @@ params_Kvasir_SEG = {
     "dice_loss_mode": "extension",
     "dice_mode": "standard",
     # —————————————————————————————————————————————   Training   ——————————————————————————————————————————————————————
-    "optimize_params": False,
+    "optimize_params": True,
     "run_dir": r"./runs",
     "start_epoch": 0,
-    "end_epoch": 500,
+    "end_epoch": 100,
     "best_metric": 0,
     "terminal_show_freq": 8,
     "save_epoch_freq": 150,

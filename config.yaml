@@ -1,18 +1,18 @@
 experimentName: DRIVE
 searchSpaceFile: search_space.json
-trialCommand: python train.py -d "DRIVE" -m "PMFSNet" -dim "2d" -s "BASIC"
+trialCommand: python train.py -d "Kvasir-SEG" -m "PMFSNet" -dim "2d" -s "BASIC"
 trialCodeDirectory: ./  # 确保代码目录正确
 trialGpuNumber: 1
 experimentWorkingDirectory: ./log
 logLevel: info
-trialConcurrency: 12  # 并发运行的最大试验数（根据你 GPU 数量调整）
+trialConcurrency: 6  # 并发运行的最大试验数（根据你 GPU 数量调整）
 
 # 配置调参器使用的 GPU
 tunerGpuIndices: [0, 1, 2, 3]
 
 # 最大实验时长
 maxExperimentDuration: 2d
-maxTrialNumber: 1000
+maxTrialNumber: 200
 
 tuner:
   name: TPE
@@ -22,5 +22,5 @@ tuner:
 trainingService:
   platform: local
   gpuIndices: [0, 1, 2, 3]  # 可用的 GPU
-  maxTrialNumberPerGpu: 3  # 每个 GPU 上最多允许的并发试验数
+  maxTrialNumberPerGpu: 1 # 每个 GPU 上最多允许的并发试验数
   useActiveGpu: True
