@@ -1,1 +1,0 @@
-The dispersed images are stored in this directory.
