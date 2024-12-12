@@ -7,6 +7,7 @@
 @License  :   (C)Copyright 2024
 """
 import os
+
 os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "max_split_size_mb:128"
 
@@ -63,11 +64,7 @@ params_3D_CBCT_Tooth = {
     "classes": 2,
     "scaling_version": "TINY",
     "dimension": "3d",
-    "index_to_class_dict":
-        {
-            0: "background",
-            1: "foreground"
-        },
+    "index_to_class_dict": {0: "background", 1: "foreground"},
     "resume": None,
     "pretrain": None,
     # ——————————————————————————————————————————————    Optimizer     ——————————————————————————————————————————————————————
@@ -104,7 +101,7 @@ params_3D_CBCT_Tooth = {
     "terminal_show_freq": 256,
     "save_epoch_freq": 4,
     # ————————————————————————————————————————————   Testing   ———————————————————————————————————————————————————————
-    "crop_stride": [32, 32, 32]
+    "crop_stride": [32, 32, 32],
 }
 
 params_ISIC_2018 = {
@@ -134,11 +131,7 @@ params_ISIC_2018 = {
     "classes": 2,
     "scaling_version": "BASIC",
     "dimension": "2d",
-    "index_to_class_dict":
-        {
-            0: "background",
-            1: "foreground"
-        },
+    "index_to_class_dict": {0: "background", 1: "foreground"},
     "resume": None,
     "pretrain": None,
     # ——————————————————————————————————————————————    Optimizer     ——————————————————————————————————————————————————————
@@ -179,6 +172,7 @@ params_DRIVE = {
     "CUDA_VISIBLE_DEVICES": "0",
     "seed": 1777777,
     "cuda": True,
+    "device": torch.device("cuda:0" if torch.cuda.is_available() else "cpu"),
     "benchmark": False,
     "deterministic": True,
     # —————————————————————————————————————————————     Preprocessing       ————————————————————————————————————————————————————
@@ -198,11 +192,7 @@ params_DRIVE = {
     "model_name": "PMFSNet",
     "in_channels": 3,
     "classes": 2,
-    "index_to_class_dict":
-    {
-        0: "background",
-        1: "foreground"
-    },
+    "index_to_class_dict": {0: "background", 1: "foreground"},
     "resume": None,
     "pretrain": None,
     # ——————————————————————————————————————————————    Optimizer     ——————————————————————————————————————————————————————
@@ -243,6 +233,7 @@ params_STARE = {
     "CUDA_VISIBLE_DEVICES": "0",
     "seed": 1777777,
     "cuda": True,
+    "device": torch.device("cuda:0" if torch.cuda.is_available() else "cpu"),
     "benchmark": False,
     "deterministic": True,
     # —————————————————————————————————————————————     Preprocessing       ————————————————————————————————————————————————————
@@ -262,11 +253,7 @@ params_STARE = {
     "model_name": "PMFSNet",
     "in_channels": 3,
     "classes": 2,
-    "index_to_class_dict":
-    {
-        0: "background",
-        1: "foreground"
-    },
+    "index_to_class_dict": {0: "background", 1: "foreground"},
     "resume": None,
     "pretrain": None,
     # ——————————————————————————————————————————————    Optimizer     ——————————————————————————————————————————————————————
@@ -307,6 +294,7 @@ params_CHASE_DB1 = {
     "CUDA_VISIBLE_DEVICES": "0",
     "seed": 1777777,
     "cuda": True,
+    "device": torch.device("cuda:0" if torch.cuda.is_available() else "cpu"),
     "benchmark": False,
     "deterministic": True,
     # —————————————————————————————————————————————     Preprocessing       ————————————————————————————————————————————————————
@@ -326,11 +314,7 @@ params_CHASE_DB1 = {
     "model_name": "PMFSNet",
     "in_channels": 3,
     "classes": 2,
-    "index_to_class_dict":
-    {
-        0: "background",
-        1: "foreground"
-    },
+    "index_to_class_dict": {0: "background", 1: "foreground"},
     "resume": None,
     "pretrain": None,
     # ——————————————————————————————————————————————    Optimizer     ——————————————————————————————————————————————————————
@@ -369,7 +353,16 @@ params_CHASE_DB1 = {
 
 def run(params, dataset_ind, dataset_total, model_ind, model_total):
     # print current dataset and model
-    print("[{:01d}/{:01d}] [{:02d}/{:02d}]Current dataset: {}, model_name: {}".format(dataset_ind, dataset_total, model_ind, model_total, params["dataset_name"], params["model_name"]))
+    print(
+        "[{:01d}/{:01d}] [{:02d}/{:02d}]Current dataset: {}, model_name: {}".format(
+            dataset_ind,
+            dataset_total,
+            model_ind,
+            model_total,
+            params["dataset_name"],
+            params["model_name"],
+        )
+    )
     # initialize the dataloader
     valid_loader = dataloaders.get_test_dataloader(params)
     # initialize the model
@@ -415,11 +408,26 @@ def main(datasets_list, models_list, seed=1777777, benchmark=False, deterministi
                 raise RuntimeError(f"No {dataset_name} dataset available")
             # update the dictionary of hyperparameters used for training
             params["dataset_name"] = dataset_name
-            params["dataset_path"] = os.path.join(r"./datasets", ("NC-release-data-checked" if dataset_name == "3D-CBCT-Tooth" else dataset_name))
+            params["dataset_path"] = os.path.join(
+                r"./datasets",
+                (
+                    "NC-release-data-checked"
+                    if dataset_name == "3D-CBCT-Tooth"
+                    else dataset_name
+                ),
+            )
             params["model_name"] = model_name
-            params["pretrain"] = os.path.join(r"./pretrain", pretrain_dataset_name + "_" + model_name + ".pth")
+            params["pretrain"] = os.path.join(
+                r"./pretrain", pretrain_dataset_name + "_" + model_name + ".pth"
+            )
             # calculate the dsc and iou of all images in test set
-            dsc_list, iou_list = run(params, dataset_ind + 1, len(datasets_list), model_ind + 1, len(models_list[dataset_ind]))
+            dsc_list, iou_list = run(
+                params,
+                dataset_ind + 1,
+                len(datasets_list),
+                model_ind + 1,
+                len(models_list[dataset_ind]),
+            )
             dsc_dict[model_name] = dsc_list
             iou_dict[model_name] = iou_list
         # convert to dataframe
@@ -433,7 +441,7 @@ def main(datasets_list, models_list, seed=1777777, benchmark=False, deterministi
 def calculate_p_value(dataset_name, metric_name, base_model_name):
     # load df
     file_path = os.path.join(r"./files", dataset_name + "_" + metric_name + ".xlsx")
-    df = pd.read_excel(file_path, sheet_name='Sheet1')
+    df = pd.read_excel(file_path, sheet_name="Sheet1")
     df = df.drop(df.columns[0], axis=1)
 
     # extract base_model_name column
@@ -456,20 +464,56 @@ def calculate_p_value(dataset_name, metric_name, base_model_name):
 
     # save p_value
     p_value_df = pd.DataFrame.from_dict(p_values)
-    p_value_df.to_excel(os.path.join(r"./files", dataset_name + "_" + metric_name + "_pvalue" + ".xlsx"))
+    p_value_df.to_excel(
+        os.path.join(r"./files", dataset_name + "_" + metric_name + "_pvalue" + ".xlsx")
+    )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # evaluate all metrics
-    main(datasets_list=["DRIVE", "STARE", "CHASE-DB1"],
-         models_list=[
-             ["UNet", "AttU_Net", "CANet", "CENet", "CPFNet", "CKDNet", "SwinUnet", "DATransUNet", "PMFSNet"],
-             ["UNet", "AttU_Net", "CANet", "CENet", "CPFNet", "CKDNet", "SwinUnet", "DATransUNet", "PMFSNet"],
-             ["UNet", "AttU_Net", "CANet", "CENet", "CPFNet", "CKDNet", "SwinUnet", "DATransUNet", "PMFSNet"]
-         ],
-        seed=1777777, benchmark=False, deterministic=True)
+    main(
+        datasets_list=["DRIVE", "STARE", "CHASE-DB1"],
+        models_list=[
+            [
+                "UNet",
+                "AttU_Net",
+                "CANet",
+                "CENet",
+                "CPFNet",
+                "CKDNet",
+                "SwinUnet",
+                "DATransUNet",
+                "PMFSNet",
+            ],
+            [
+                "UNet",
+                "AttU_Net",
+                "CANet",
+                "CENet",
+                "CPFNet",
+                "CKDNet",
+                "SwinUnet",
+                "DATransUNet",
+                "PMFSNet",
+            ],
+            [
+                "UNet",
+                "AttU_Net",
+                "CANet",
+                "CENet",
+                "CPFNet",
+                "CKDNet",
+                "SwinUnet",
+                "DATransUNet",
+                "PMFSNet",
+            ],
+        ],
+        seed=1777777,
+        benchmark=False,
+        deterministic=True,
+    )
 
     # calculate p_value
-    calculate_p_value(dataset_name="3D-CBCT-Tooth", metric_name="iou", base_model_name="PMFSNet")
-
-
+    calculate_p_value(
+        dataset_name="3D-CBCT-Tooth", metric_name="iou", base_model_name="PMFSNet"
+    )
