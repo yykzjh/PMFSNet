@@ -12,6 +12,7 @@ os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "max_split_size_mb:128"
 
 import cv2
 from tqdm import tqdm
+from PIL import Image, ImageDraw, ImageFont
 import pandas as pd
 import torch
 from scipy import stats
@@ -344,9 +345,53 @@ def generate_segment_result_images(
             cnt += 1
 
 
+def concat_segmented_image(result_dir, scale=1):
+    # create the final image
+    image = np.full((976, 3680, 3), 255)
+    # traverse the samples
+    for i in range(4):
+        for j in range(11):
+            pos_x, pos_y = i * (224 + 10), j * (320 + 10) + 60
+            img = cv2.imread(os.path.join(result_dir, str(i) + "_{:02d}".format(j) + ".jpg"))
+            img = cv2.resize(img, (320, 224))
+            image[pos_x: pos_x + 224, pos_y: pos_y + 320, :] = img
+    image = image[:, :, ::-1]
+
+    # set the text
+    col_names = ["Image", "Ground Truth", "U-Net", "AttU-Net", "CA-Net", "CE-Net", "CPF-Net", "CKDNet", "SwinUnet", "DATransUNet", "PMFSNet"]
+    row_names = ["DRIVE", "STARE", "CHASE-DB1", "Kvasir-SEG"]
+    col_positions = [170, 450, 825, 1140, 1475, 1790, 2140, 2470, 2800, 3120, 3420]
+    row_positions = [100, 334, 568, 802]
+
+    image = Image.fromarray(np.uint8(image))
+    draw = ImageDraw.Draw(image)
+    font = ImageFont.truetype(r"C:\Windows\Fonts\times.ttf", 36)
+    color = (0, 0, 0)
+
+    # add text
+    for i, text in enumerate(col_names):
+        position = (col_positions[i], 931)
+        draw.text(position, text, font=font, fill=color)
+    for i, text in enumerate(row_names):
+        position = (5, row_positions[i])
+        draw.text(position, text, font=font, fill=color, stroke_width=1)
+
+    image.show()
+    w, h = image.size
+    image = image.resize((scale * w, scale * h), resample=Image.Resampling.BILINEAR)
+    print(image.size)
+    image.save(os.path.join(result_dir, "concat_segmentation.jpg"))
+
+
 if __name__ == "__main__":
     # generate segmented images
     generate_segment_result_images(
         "DRIVE",
         ["UNet", "AttU_Net", "CANet", "CENet", "CPFNet", "CKDNet", "SwinUnet", "DATransUNet", "PMFSNet"]
     )
+
+    # concatenate the segmented image
+    # concat_segmented_image(
+    #     r"./images/additional_segmented_image",
+    #     scale=1
+    # )
