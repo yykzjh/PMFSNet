@@ -250,6 +250,11 @@ def segment_image(params, model, image, label):
 def generate_segment_result_images(
     dataset_name, model_names, seed=1777777, benchmark=False, deterministic=True
 ):
+    # build the dir to save the result
+    result_dir = os.path.join(r"./images", dataset_name + "_segment_result")
+    if os.path.exists(result_dir):
+        shutil.rmtree(result_dir)
+    os.makedirs(result_dir)
     # select the dictionary of hyperparameters used for training
     if dataset_name == "DRIVE":
         params = params_DRIVE
@@ -314,8 +319,7 @@ def generate_segment_result_images(
             image = cv2.resize(image, (224, 224), interpolation=cv2.INTER_AREA)
             cv2.imwrite(
                 os.path.join(
-                    r"./images",
-                    dataset_name + "_segment_result",
+                    result_dir,
                     "{:04d}".format(cnt) + "_0.jpg",
                 ),
                 image,
@@ -323,8 +327,7 @@ def generate_segment_result_images(
             label = cv2.resize(label, (224, 224), interpolation=cv2.INTER_NEAREST)
             cv2.imwrite(
                 os.path.join(
-                    r"./images",
-                    dataset_name + "_segment_result",
+                    result_dir,
                     "{:04d}".format(cnt) + "_1.jpg",
                 ),
                 label,
@@ -333,10 +336,17 @@ def generate_segment_result_images(
                 segment_result_image = segment_result_image[:, :, ::-1]
                 cv2.imwrite(
                     os.path.join(
-                        r"./images",
-                        dataset_name + "_segment_result",
+                        result_dir,
                         "{:04d}".format(cnt) + "_" + str(j + 2) + ".jpg",
                     ),
                     segment_result_image,
                 )
             cnt += 1
+
+
+if __name__ == "__main__":
+    # generate segmented images
+    generate_segment_result_images(
+        "DRIVE",
+        ["UNet", "AttU_Net", "CANet", "CENet", "CPFNet", "CKDNet", "SwinUnet", "DATransUNet", "PMFSNet"]
+    )
