@@ -455,7 +455,7 @@ def calculate_p_value(dataset_name, metric_name, base_model_name):
         # exclude base_model_name
         if model_name != base_model_name:
             model_scores = df[model_name]
-            t_stat, p_value = stats.ttest_rel(model_scores, base_model_scores)
+            _, p_value = stats.ttest_ind(model_scores, base_model_scores)
             p_values[model_name] = [p_value]
 
     # print p_value
@@ -470,15 +470,15 @@ def calculate_p_value(dataset_name, metric_name, base_model_name):
 
 if __name__ == '__main__':
     # evaluate all metrics
-    main(datasets_list=["DRIVE", "STARE", "CHASE-DB1"],
-         models_list=[
-             ["UNet", "AttU_Net", "CANet", "CENet", "CPFNet", "CKDNet", "SwinUnet", "DATransUNet", "PMFSNet"],
-             ["UNet", "AttU_Net", "CANet", "CENet", "CPFNet", "CKDNet", "SwinUnet", "DATransUNet", "PMFSNet"],
-             ["UNet", "AttU_Net", "CANet", "CENet", "CPFNet", "CKDNet", "SwinUnet", "DATransUNet", "PMFSNet"]
-         ],
-        seed=1777777, benchmark=False, deterministic=True)
+    # main(datasets_list=["DRIVE", "STARE", "CHASE-DB1"],
+    #      models_list=[
+    #          ["UNet", "AttU_Net", "CANet", "CENet", "CPFNet", "CKDNet", "SwinUnet", "DATransUNet", "PMFSNet"],
+    #          ["UNet", "AttU_Net", "CANet", "CENet", "CPFNet", "CKDNet", "SwinUnet", "DATransUNet", "PMFSNet"],
+    #          ["UNet", "AttU_Net", "CANet", "CENet", "CPFNet", "CKDNet", "SwinUnet", "DATransUNet", "PMFSNet"]
+    #      ],
+    #     seed=1777777, benchmark=False, deterministic=True)
 
     # calculate p_value
-    # calculate_p_value(dataset_name="3D-CBCT-Tooth", metric_name="iou", base_model_name="PMFSNet")
+    calculate_p_value(dataset_name="STARE", metric_name="iou", base_model_name="PMFSNet")
 
 

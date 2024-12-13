@@ -237,12 +237,12 @@ def segment_image(params, model, image, label):
     seg_image = np.dstack([segmented_image_np] * 3)
     label = np.dstack([label_np] * 3)
     # 定义红色、白色和绿色图像
-    red = np.zeros((224, 224, 3))
+    red = np.zeros((512, 512, 3))
     red[:, :, 0] = 255
-    green = np.zeros((224, 224, 3))
+    green = np.zeros((512, 512, 3))
     green[:, :, 1] = 255
-    white = np.ones((224, 224, 3)) * 255
-    segmented_display_image = np.zeros((224, 224, 3))
+    white = np.ones((512, 512, 3)) * 255
+    segmented_display_image = np.zeros((512, 512, 3))
     segmented_display_image = np.where(
         seg_image & label, white, segmented_display_image
     )
@@ -340,6 +340,7 @@ def generate_segment_result_images(
                 label,
             )
             for j, segment_result_image in enumerate(segment_result_images_list):
+                segment_result_image = cv2.resize(segment_result_image, (224, 224), interpolation=cv2.INTER_NEAREST)
                 segment_result_image = segment_result_image[:, :, ::-1]
                 cv2.imwrite(
                     os.path.join(
@@ -353,9 +354,9 @@ def generate_segment_result_images(
 
 def concat_segmented_image(result_dir, scale=1):
     # create the final image
-    image = np.full((976, 3680, 3), 255)
+    image = np.full((742, 3680, 3), 255)
     # traverse the samples
-    for i in range(4):
+    for i in range(3):
         for j in range(11):
             pos_x, pos_y = i * (224 + 10), j * (320 + 10) + 60
             img = cv2.imread(os.path.join(result_dir, str(i) + "_{:02d}".format(j) + ".jpg"))
@@ -365,9 +366,9 @@ def concat_segmented_image(result_dir, scale=1):
 
     # set the text
     col_names = ["Image", "Ground Truth", "U-Net", "AttU-Net", "CA-Net", "CE-Net", "CPF-Net", "CKDNet", "SwinUnet", "DATransUNet", "PMFSNet"]
-    row_names = ["DRIVE", "STARE", "CHASE-DB1", "Kvasir-SEG"]
+    row_names = ["DRIVE", "STARE", "CHASE-DB1"]
     col_positions = [170, 450, 825, 1140, 1475, 1790, 2140, 2470, 2800, 3120, 3420]
-    row_positions = [100, 334, 568, 802]
+    row_positions = [100, 334, 568]
 
     image = Image.fromarray(np.uint8(image))
     draw = ImageDraw.Draw(image)
@@ -376,7 +377,7 @@ def concat_segmented_image(result_dir, scale=1):
 
     # add text
     for i, text in enumerate(col_names):
-        position = (col_positions[i], 931)
+        position = (col_positions[i], 697)
         draw.text(position, text, font=font, fill=color)
     for i, text in enumerate(row_names):
         position = (5, row_positions[i])
@@ -391,13 +392,13 @@ def concat_segmented_image(result_dir, scale=1):
 
 if __name__ == "__main__":
     # generate segmented images
-    generate_segment_result_images(
-        "DRIVE",
-        ["UNet", "AttU_Net", "CANet", "CENet", "CPFNet", "CKDNet", "SwinUnet", "DATransUNet", "PMFSNet"]
-    )
+    # generate_segment_result_images(
+    #     "CHASE-DB1",
+    #     ["UNet", "AttU_Net", "CANet", "CENet", "CPFNet", "CKDNet", "SwinUnet", "DATransUNet", "PMFSNet"]
+    # )
 
     # concatenate the segmented image
-    # concat_segmented_image(
-    #     r"./images/additional_segmented_image",
-    #     scale=1
-    # )
+    concat_segmented_image(
+        r"./images/additional_segmented_image",
+        scale=1
+    )
