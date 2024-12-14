@@ -211,6 +211,73 @@ params_CHASE_DB1 = {
     "save_epoch_freq": 50,
 }
 
+params_Kvasir_SEG = {
+    # ——————————————————————————————————————————————     Launch Initialization    ———————————————————————————————————————————————————
+    "CUDA_VISIBLE_DEVICES": "0",
+    "seed": 1777777,
+    "cuda": True,
+    "device": torch.device("cuda:0" if torch.cuda.is_available() else "cpu"),
+    "benchmark": False,
+    "deterministic": True,
+    # —————————————————————————————————————————————     Preprocessing       ————————————————————————————————————————————————————
+    "resize_shape": (224, 224),
+    # ——————————————————————————————————————————————    Data Augmentation    ——————————————————————————————————————————————————————
+    "augmentation_p": 0.22448543324157222,
+    "color_jitter": 0.3281010563062837,
+    "random_rotation_angle": 30,
+    "normalize_means": (0.24398195, 0.32772844, 0.56273),
+    "normalize_stds": (0.18945072, 0.2217485, 0.31491405),
+    # —————————————————————————————————————————————    Data Loading     ——————————————————————————————————————————————————————
+    "dataset_name": "Kvasir-SEG",
+    "dataset_path": r"./datasets/Kvasir-SEG",
+    "batch_size": 1,
+    "num_workers": 2,
+    # —————————————————————————————————————————————    Model     ——————————————————————————————————————————————————————
+    "model_name": "PMFSNet",
+    "in_channels": 3,
+    "classes": 2,
+    "scaling_version": "BASIC",
+    "dimension": "2d",
+    "index_to_class_dict":
+    {
+        0: "background",
+        1: "foreground"
+    },
+    "resume": None,
+    "pretrain": None,
+    # ——————————————————————————————————————————————    Optimizer     ——————————————————————————————————————————————————————
+    "optimizer_name": "Adam",
+    "learning_rate": 0.0005,
+    "weight_decay": 0.000001,
+    "momentum": 0.7781834740942233,
+    # ———————————————————————————————————————————    Learning Rate Scheduler     —————————————————————————————————————————————————————
+    "lr_scheduler_name": "CosineAnnealingLR",
+    "gamma": 0.8079569870480704,
+    "step_size": 20,
+    "milestones": [10, 30, 60, 100, 120, 140, 160, 170],
+    "T_max": 200,
+    "T_0": 10,
+    "T_mult": 2,
+    "mode": "max",
+    "patience": 5,
+    "factor": 0.91,
+    # ————————————————————————————————————————————    Loss And Metric     ———————————————————————————————————————————————————————
+    "metric_names": ["DSC", "IoU", "JI", "ACC"],
+    "loss_function_name": "DiceLoss",
+    "class_weight": [0.1557906849111095, 0.8442093150888904],
+    "sigmoid_normalization": False,
+    "dice_loss_mode": "extension",
+    "dice_mode": "standard",
+    # —————————————————————————————————————————————   Training   ——————————————————————————————————————————————————————
+    "optimize_params": False,
+    "run_dir": r"./runs",
+    "start_epoch": 0,
+    "end_epoch": 400,
+    "best_metric": 0,
+    "terminal_show_freq": 8,
+    "save_epoch_freq": 150,
+}
+
 
 def segment_image(params, model, image, label):
     transform = my_transforms.Compose(
@@ -237,12 +304,12 @@ def segment_image(params, model, image, label):
     seg_image = np.dstack([segmented_image_np] * 3)
     label = np.dstack([label_np] * 3)
     # 定义红色、白色和绿色图像
-    red = np.zeros((512, 512, 3))
+    red = np.zeros((224, 224, 3))
     red[:, :, 0] = 255
-    green = np.zeros((512, 512, 3))
+    green = np.zeros((224, 224, 3))
     green[:, :, 1] = 255
-    white = np.ones((512, 512, 3)) * 255
-    segmented_display_image = np.zeros((512, 512, 3))
+    white = np.ones((224, 224, 3)) * 255
+    segmented_display_image = np.zeros((224, 224, 3))
     segmented_display_image = np.where(
         seg_image & label, white, segmented_display_image
     )
@@ -269,6 +336,8 @@ def generate_segment_result_images(
         params = params_STARE
     elif dataset_name == "CHASE-DB1":
         params = params_CHASE_DB1
+    elif dataset_name == "Kvasir-SEG":
+        params = params_Kvasir_SEG
     else:
         raise RuntimeError(f"No {dataset_name} dataset available")
     # launch initialization
@@ -354,21 +423,23 @@ def generate_segment_result_images(
 
 def concat_segmented_image(result_dir, scale=1):
     # create the final image
-    image = np.full((742, 3680, 3), 255)
+    image = np.full((742, 2614, 3), 255)
     # traverse the samples
     for i in range(3):
         for j in range(11):
-            pos_x, pos_y = i * (224 + 10), j * (320 + 10) + 60
+            pos_x, pos_y = i * (224 + 10), j * (224 + 10) + 50
             img = cv2.imread(os.path.join(result_dir, str(i) + "_{:02d}".format(j) + ".jpg"))
-            img = cv2.resize(img, (320, 224))
-            image[pos_x: pos_x + 224, pos_y: pos_y + 320, :] = img
+            img = cv2.resize(img, (224, 224))
+            image[pos_x: pos_x + 224, pos_y: pos_y + 224, :] = img
     image = image[:, :, ::-1]
 
     # set the text
     col_names = ["Image", "Ground Truth", "U-Net", "AttU-Net", "CA-Net", "CE-Net", "CPF-Net", "CKDNet", "SwinUnet", "DATransUNet", "PMFSNet"]
-    row_names = ["DRIVE", "STARE", "CHASE-DB1"]
-    col_positions = [170, 450, 825, 1140, 1475, 1790, 2140, 2470, 2800, 3120, 3420]
+    row_names = ["a)", "b)", "c)"]
+    col_positions = [270, 445, 735, 945, 1190, 1430, 1650, 1885, 2110, 2312, 2585]
+    col_positions = [x - 150 for x in col_positions]
     row_positions = [100, 334, 568]
+    row_left_positions = [5, 5, 5]
 
     image = Image.fromarray(np.uint8(image))
     draw = ImageDraw.Draw(image)
@@ -380,25 +451,25 @@ def concat_segmented_image(result_dir, scale=1):
         position = (col_positions[i], 697)
         draw.text(position, text, font=font, fill=color)
     for i, text in enumerate(row_names):
-        position = (5, row_positions[i])
+        position = (row_left_positions[i], row_positions[i])
         draw.text(position, text, font=font, fill=color, stroke_width=1)
 
     image.show()
     w, h = image.size
     image = image.resize((scale * w, scale * h), resample=Image.Resampling.BILINEAR)
     print(image.size)
-    image.save(os.path.join(result_dir, "concat_segmentation.jpg"))
+    image.save(os.path.join(result_dir, "Kvasir_SEG_Segmentation.jpg"))
 
 
 if __name__ == "__main__":
     # generate segmented images
     # generate_segment_result_images(
-    #     "CHASE-DB1",
+    #     "Kvasir-SEG",
     #     ["UNet", "AttU_Net", "CANet", "CENet", "CPFNet", "CKDNet", "SwinUnet", "DATransUNet", "PMFSNet"]
     # )
 
     # concatenate the segmented image
     concat_segmented_image(
-        r"./images/additional_segmented_image",
+        r"./images/Kvasir-SEG_segmented_image",
         scale=1
     )

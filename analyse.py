@@ -13,6 +13,13 @@ from PIL import Image, ImageDraw, ImageFont
 from proplot import rc
 import matplotlib.pyplot as plt
 
+import torch
+from thop import profile
+from ptflops import get_model_complexity_info
+from pytorch_model_summary import summary
+
+import lib.models as models
+
 
 
 def generate_segmented_sample_image(scale=1):
@@ -105,7 +112,41 @@ def generate_bubble_image():
     plt.show()
 
 
-if __name__ == '__main__':
-    # generate_segmented_sample_image()
+def count_parameters(model):
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
-    generate_bubble_image()
+
+def analyse_models(model_names_list):
+    opt = {
+        "dataset_name": "DRIVE",
+        "in_channels": 3,
+        "classes": 2,
+        "resize_shape": (224, 224),
+        "scaling_version": "BASIC",
+        "dimension": "2d",
+        "device": "cuda:0",
+    }
+    for model_name in model_names_list:
+        opt["model_name"] = model_name
+        model = models.get_model(opt)
+
+        print("***************************************** model name: {} *****************************************".format(model_name))
+
+        print("params: {:.6f} M".format(count_parameters(model)/1e6))
+
+        input = torch.randn(1, 3, opt["resize_shape"][0], opt["resize_shape"][1]).to(opt["device"])
+        flops, params = profile(model, (input,))
+        print("flops: {:.6f} G, params: {:.6f} M".format(flops / 1e9, params / 1e6))
+
+        flops, params = get_model_complexity_info(model, (3, opt["resize_shape"][0], opt["resize_shape"][1]), as_strings=False, print_per_layer_stat=False)
+        print("flops: {:.6f} G, params: {:.6f} M".format(flops / 1e9, params / 1e6))
+
+        print(summary(model, input, show_input=False, show_hierarchical=False))
+
+
+if __name__ == '__main__':
+    generate_segmented_sample_image()
+
+    # generate_bubble_image()
+
+    # analyse_models(["UNet", "AttU_Net", "CANet", "CENet", "CPFNet", "CKDNet", "SwinUnet", "DATransUNet", "PMFSNet"])

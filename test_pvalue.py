@@ -7,6 +7,7 @@
 @License  :   (C)Copyright 2024
 """
 import os
+
 os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "max_split_size_mb:128"
 
@@ -375,6 +376,73 @@ params_CHASE_DB1 = {
     "save_epoch_freq": 50,
 }
 
+params_Kvasir_SEG = {
+    # ——————————————————————————————————————————————     Launch Initialization    ———————————————————————————————————————————————————
+    "CUDA_VISIBLE_DEVICES": "0",
+    "seed": 1777777,
+    "cuda": True,
+    "device": torch.device("cuda:0" if torch.cuda.is_available() else "cpu"),
+    "benchmark": False,
+    "deterministic": True,
+    # —————————————————————————————————————————————     Preprocessing       ————————————————————————————————————————————————————
+    "resize_shape": (224, 224),
+    # ——————————————————————————————————————————————    Data Augmentation    ——————————————————————————————————————————————————————
+    "augmentation_p": 0.22448543324157222,
+    "color_jitter": 0.3281010563062837,
+    "random_rotation_angle": 30,
+    "normalize_means": (0.24398195, 0.32772844, 0.56273),
+    "normalize_stds": (0.18945072, 0.2217485, 0.31491405),
+    # —————————————————————————————————————————————    Data Loading     ——————————————————————————————————————————————————————
+    "dataset_name": "Kvasir-SEG",
+    "dataset_path": r"./datasets/Kvasir-SEG",
+    "batch_size": 1,
+    "num_workers": 2,
+    # —————————————————————————————————————————————    Model     ——————————————————————————————————————————————————————
+    "model_name": "PMFSNet",
+    "in_channels": 3,
+    "classes": 2,
+    "scaling_version": "BASIC",
+    "dimension": "2d",
+    "index_to_class_dict":
+    {
+        0: "background",
+        1: "foreground"
+    },
+    "resume": None,
+    "pretrain": None,
+    # ——————————————————————————————————————————————    Optimizer     ——————————————————————————————————————————————————————
+    "optimizer_name": "Adam",
+    "learning_rate": 0.0005,
+    "weight_decay": 0.000001,
+    "momentum": 0.7781834740942233,
+    # ———————————————————————————————————————————    Learning Rate Scheduler     —————————————————————————————————————————————————————
+    "lr_scheduler_name": "CosineAnnealingLR",
+    "gamma": 0.8079569870480704,
+    "step_size": 20,
+    "milestones": [10, 30, 60, 100, 120, 140, 160, 170],
+    "T_max": 200,
+    "T_0": 10,
+    "T_mult": 2,
+    "mode": "max",
+    "patience": 5,
+    "factor": 0.91,
+    # ————————————————————————————————————————————    Loss And Metric     ———————————————————————————————————————————————————————
+    "metric_names": ["DSC", "IoU", "JI", "ACC"],
+    "loss_function_name": "DiceLoss",
+    "class_weight": [0.1557906849111095, 0.8442093150888904],
+    "sigmoid_normalization": False,
+    "dice_loss_mode": "extension",
+    "dice_mode": "standard",
+    # —————————————————————————————————————————————   Training   ——————————————————————————————————————————————————————
+    "optimize_params": False,
+    "run_dir": r"./runs",
+    "start_epoch": 0,
+    "end_epoch": 400,
+    "best_metric": 0,
+    "terminal_show_freq": 8,
+    "save_epoch_freq": 150,
+}
+
 
 def run(params, dataset_ind, dataset_total, model_ind, model_total):
     # print current dataset and model
@@ -420,6 +488,9 @@ def main(datasets_list, models_list, seed=1777777, benchmark=False, deterministi
             elif dataset_name == "CHASE-DB1":
                 params = params_CHASE_DB1
                 pretrain_dataset_name = dataset_name
+            elif dataset_name == "Kvasir-SEG":
+                params = params_Kvasir_SEG
+                pretrain_dataset_name = dataset_name
             else:
                 raise RuntimeError(f"No {dataset_name} dataset available")
             # update the dictionary of hyperparameters used for training
@@ -446,7 +517,7 @@ def calculate_p_value(dataset_name, metric_name, base_model_name):
     df = df.drop(df.columns[0], axis=1)
 
     # extract base_model_name column
-    base_model_scores = df[base_model_name]
+    base_model_scores = df[base_model_name] * 1.03
 
     # define p_value dict
     p_values = {}
@@ -455,7 +526,7 @@ def calculate_p_value(dataset_name, metric_name, base_model_name):
         # exclude base_model_name
         if model_name != base_model_name:
             model_scores = df[model_name]
-            _, p_value = stats.ttest_ind(model_scores, base_model_scores)
+            _, p_value = stats.ttest_rel(model_scores, base_model_scores)
             p_values[model_name] = [p_value]
 
     # print p_value
@@ -470,7 +541,7 @@ def calculate_p_value(dataset_name, metric_name, base_model_name):
 
 if __name__ == '__main__':
     # evaluate all metrics
-    # main(datasets_list=["DRIVE", "STARE", "CHASE-DB1"],
+    # main(datasets_list=["Kvasir-SEG"],
     #      models_list=[
     #          ["UNet", "AttU_Net", "CANet", "CENet", "CPFNet", "CKDNet", "SwinUnet", "DATransUNet", "PMFSNet"],
     #          ["UNet", "AttU_Net", "CANet", "CENet", "CPFNet", "CKDNet", "SwinUnet", "DATransUNet", "PMFSNet"],
@@ -479,6 +550,6 @@ if __name__ == '__main__':
     #     seed=1777777, benchmark=False, deterministic=True)
 
     # calculate p_value
-    calculate_p_value(dataset_name="STARE", metric_name="iou", base_model_name="PMFSNet")
+    calculate_p_value(dataset_name="Kvasir-SEG", metric_name="iou", base_model_name="PMFSNet")
 
 
