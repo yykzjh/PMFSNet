@@ -12,7 +12,7 @@ from .tooth_tester import ToothTester
 
 
 def get_tester(opt, model, metrics=None):
-    if opt["dataset_name"] == "3D-CBCT-Tooth":
+    if opt["dataset_name"] == "3D-CBCT-Tooth" or opt["dataset_name"] == "Kfold-3D-CBCT-Tooth":
         tester = ToothTester(opt, model, metrics)
     elif opt["dataset_name"] == "MMOTU":
         tester = MMOTUTester(opt, model, metrics)

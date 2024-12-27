@@ -12,7 +12,7 @@ from lib.metrics import Tooth
 
 
 def get_metric(opt):
-    if opt["dataset_name"] == "3D-CBCT-Tooth":
+    if opt["dataset_name"] == "3D-CBCT-Tooth" or opt["dataset_name"] == "Kfold-3D-CBCT-Tooth":
         metrics = []
         for metric_name in opt["metric_names"]:
             if metric_name == "DSC":

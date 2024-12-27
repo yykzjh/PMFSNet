@@ -47,7 +47,7 @@ from .VNet import VNet
 
 def get_model_optimizer_lr_scheduler(opt):
     # initialize model
-    if opt["dataset_name"] == "3D-CBCT-Tooth":
+    if opt["dataset_name"] == "3D-CBCT-Tooth" or opt["dataset_name"] == "Kfold-3D-CBCT-Tooth":
         if opt["model_name"] == "DenseVNet":
             model = DenseVNet(in_channels=opt["in_channels"], classes=opt["classes"])
 
@@ -276,7 +276,7 @@ def get_model_optimizer_lr_scheduler(opt):
 
 def get_model(opt):
     # initialize model
-    if opt["dataset_name"] == "3D-CBCT-Tooth":
+    if opt["dataset_name"] == "3D-CBCT-Tooth" or opt["dataset_name"] == "Kfold-3D-CBCT-Tooth":
         if opt["model_name"] == "DenseVNet":
             model = DenseVNet(in_channels=opt["in_channels"], classes=opt["classes"])
 
