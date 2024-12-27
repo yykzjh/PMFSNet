@@ -197,18 +197,13 @@ class KfoldToothTrainer:
         return output
 
     def calculate_metric_and_update_statistcs(self, output, target, cur_batch_size, loss=None, mode="train"):
-        mask = torch.zeros(self.opt["classes"])
-        unique_index = torch.unique(target).int()
-        for index in unique_index:
-            mask[index] = 1
         self.statistics_dict[mode]["count"] += cur_batch_size
         if mode == "train":
             self.statistics_dict[mode]["loss"] += loss.item() * cur_batch_size
         for i, metric_name in enumerate(self.opt["metric_names"]):
             if (mode == "train" and metric_name == "DSC") or (mode == "valid"):
                 per_class_metric = self.metric[i](output, target)
-                per_class_metric = per_class_metric * mask
-                self.statistics_dict[mode][metric_name] += (torch.sum(per_class_metric) / torch.sum(mask)).item() * cur_batch_size
+                self.statistics_dict[mode][metric_name] += (torch.sum(per_class_metric) / 2.0).item() * cur_batch_size
 
     def init_statistics_dict(self):
         statistics_dict = {
