@@ -36,7 +36,7 @@ params = {
     "resample_spacing": [0.5, 0.5, 0.5],
     "clip_lower_bound": -1412,
     "clip_upper_bound": 17943,
-    "samples_train": 2048,
+    "samples_train": 1024,
     "crop_size": (160, 160, 96),
     "crop_threshold": 0.5,
     # ——————————————————————————————————————————————    Data Augmentation    ——————————————————————————————————————————————————————
