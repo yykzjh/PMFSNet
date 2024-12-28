@@ -57,29 +57,21 @@ class KfoldToothTrainer:
                 self.lr_scheduler.step()
 
             print(
-                "[{}]  epoch:[{:03d}/{:03d}]  lr:{:.6f}  train_loss:{:.6f}  train_dsc:{:.6f}  valid_hd:{:.6f}  valid_assd:{:.6f}  valid_iou:{:.6f}  valid_so:{:.6f}  valid_dsc:{:.6f}  best_dsc:{:.6f}"
+                "[{}]  epoch:[{:03d}/{:03d}]  lr:{:.6f}  train_loss:{:.6f}  train_dsc:{:.6f} valid_dsc:{:.6f}  best_dsc:{:.6f}"
                     .format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                             epoch, self.end_epoch - 1,
                             self.optimizer.param_groups[0]['lr'],
                             self.statistics_dict["train"]["loss"] / self.statistics_dict["train"]["count"],
                             self.statistics_dict["train"]["DSC"] / self.statistics_dict["train"]["count"],
-                            self.statistics_dict["valid"]["HD"] / self.statistics_dict["valid"]["count"],
-                            self.statistics_dict["valid"]["ASSD"] / self.statistics_dict["valid"]["count"],
-                            self.statistics_dict["valid"]["IoU"] / self.statistics_dict["valid"]["count"],
-                            self.statistics_dict["valid"]["SO"] / self.statistics_dict["valid"]["count"],
                             self.statistics_dict["valid"]["DSC"] / self.statistics_dict["valid"]["count"],
                             self.best_dsc))
             utils.pre_write_txt(
-                "[{}]  epoch:[{:03d}/{:03d}]  lr:{:.6f}  train_loss:{:.6f}  train_dsc:{:.6f}  valid_hd:{:.6f}  valid_assd:{:.6f}  valid_iou:{:.6f}  valid_so:{:.6f}  valid_dsc:{:.6f}  best_dsc:{:.6f}"
+                "[{}]  epoch:[{:03d}/{:03d}]  lr:{:.6f}  train_loss:{:.6f}  train_dsc:{:.6f}  valid_dsc:{:.6f}  best_dsc:{:.6f}"
                     .format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                             epoch, self.end_epoch - 1,
                             self.optimizer.param_groups[0]['lr'],
                             self.statistics_dict["train"]["loss"] / self.statistics_dict["train"]["count"],
                             self.statistics_dict["train"]["DSC"] / self.statistics_dict["train"]["count"],
-                            self.statistics_dict["valid"]["HD"] / self.statistics_dict["valid"]["count"],
-                            self.statistics_dict["valid"]["ASSD"] / self.statistics_dict["valid"]["count"],
-                            self.statistics_dict["valid"]["IoU"] / self.statistics_dict["valid"]["count"],
-                            self.statistics_dict["valid"]["SO"] / self.statistics_dict["valid"]["count"],
                             self.statistics_dict["valid"]["DSC"] / self.statistics_dict["valid"]["count"],
                             self.best_dsc), self.log_txt_path)
 
@@ -142,10 +134,6 @@ class KfoldToothTrainer:
             if cur_dsc > self.best_dsc:
                 self.best_dsc = cur_dsc
                 self.best_metrics = np.array([
-                    self.statistics_dict["valid"]["HD"] / self.statistics_dict["valid"]["count"],
-                    self.statistics_dict["valid"]["ASSD"] / self.statistics_dict["valid"]["count"],
-                    self.statistics_dict["valid"]["IoU"] / self.statistics_dict["valid"]["count"],
-                    self.statistics_dict["valid"]["SO"] / self.statistics_dict["valid"]["count"],
                     self.statistics_dict["valid"]["DSC"] / self.statistics_dict["valid"]["count"]
                 ])
 
@@ -201,9 +189,8 @@ class KfoldToothTrainer:
         if mode == "train":
             self.statistics_dict[mode]["loss"] += loss.item() * cur_batch_size
         for i, metric_name in enumerate(self.opt["metric_names"]):
-            if (mode == "train" and metric_name == "DSC") or (mode == "valid"):
-                per_class_metric = self.metric[i](output, target)
-                self.statistics_dict[mode][metric_name] += (torch.sum(per_class_metric) / 2.0).item() * cur_batch_size
+            per_class_metric = self.metric[i](output, target)
+            self.statistics_dict[mode][metric_name] += (torch.sum(per_class_metric) / 2.0).item() * cur_batch_size
 
     def init_statistics_dict(self):
         statistics_dict = {

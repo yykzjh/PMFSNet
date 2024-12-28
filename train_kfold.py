@@ -95,7 +95,7 @@ params = {
     "patience": 1,
     "factor": 0.5,
     # ————————————————————————————————————————————    Loss And Metric     ———————————————————————————————————————————————————————
-    "metric_names": ["HD", "ASSD", "IoU", "SO", "DSC"],
+    "metric_names": ["DSC"],
     "loss_function_name": "DiceLoss",
     "class_weight": [0.00551122, 0.99448878],
     "sigmoid_normalization": False,
@@ -105,7 +105,7 @@ params = {
     "fold_k": 5,
     "start_fold": 0,
     "current_fold": 0,
-    "metric_results_per_fold": {"HD": [], "ASSD": [], "IoU": [], "SO": [], "DSC": []},
+    "metric_results_per_fold": {"DSC": []},
     "run_dir": r"./runs",
     "start_epoch": 0,
     "end_epoch": 20,

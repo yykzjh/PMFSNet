@@ -81,7 +81,7 @@ params_3D_CBCT_Tooth = {
     "T_0": 2,
     "T_mult": 2,
     "mode": "max",
-    "patience": 1,
+    "patience": 50,
     "factor": 0.5,
     # ————————————————————————————————————————————    Loss And Metric     ———————————————————————————————————————————————————————
     "metric_names": ["DSC"],
