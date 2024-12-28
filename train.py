@@ -55,7 +55,7 @@ params_3D_CBCT_Tooth = {
     "batch_size": 1,
     "num_workers": 2,
     # —————————————————————————————————————————————    Model     ——————————————————————————————————————————————————————
-    "model_name": "PMFSNet",
+    "model_name": "UNet3D",
     "in_channels": 1,
     "classes": 2,
     "scaling_version": "TINY",

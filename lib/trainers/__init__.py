@@ -15,7 +15,7 @@ from .kfold_tooth_trainer import KfoldToothTrainer
 def get_trainer(opt, train_loader, valid_loader, model, optimizer, lr_scheduler, loss_function, metric):
     if opt["dataset_name"] == "3D-CBCT-Tooth":
         trainer = ToothTrainer(opt, train_loader, valid_loader, model, optimizer, lr_scheduler, loss_function, metric)
-    if opt["dataset_name"] == "Kfold-3D-CBCT-Tooth":
+    elif opt["dataset_name"] == "Kfold-3D-CBCT-Tooth":
         trainer = KfoldToothTrainer(opt, train_loader, valid_loader, model, optimizer, lr_scheduler, loss_function, metric)
     elif opt["dataset_name"] == "MMOTU":
         trainer = MMOTUTrainer(opt, train_loader, valid_loader, model, optimizer, lr_scheduler, loss_function, metric)
