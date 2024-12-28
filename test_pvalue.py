@@ -495,7 +495,7 @@ def main(datasets_list, models_list, seed=1777777, benchmark=False, deterministi
                 raise RuntimeError(f"No {dataset_name} dataset available")
             # update the dictionary of hyperparameters used for training
             params["dataset_name"] = dataset_name
-            params["dataset_path"] = os.path.join(r"./datasets", ("NC-release-data-checked" if dataset_name == "3D-CBCT-Tooth" else dataset_name))
+            params["dataset_path"] = os.path.join(r"./datasets", dataset_name)
             params["model_name"] = model_name
             params["pretrain"] = os.path.join(r"./pretrain", pretrain_dataset_name + "_" + model_name + ".pth")
             # calculate the dsc and iou of all images in test set

@@ -26,7 +26,7 @@ pip install -r requirements.txt
 We obtained three public datasets and processed them in some way. All datasets are placed in the `./datasets` directory after unzipping.
 1. [3D CBCT Tooth dataset](https://pan.baidu.com/s/10qf6k10GE9OHYcJ76wrx-w?pwd=6ad8):
 ```
-./datasets/NC-release-data-checked/
+./datasets/3D-CBCT-Tooth/
 	sub_volumes/160-160-96_2048.npz
 	train/
 		images/

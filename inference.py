@@ -264,7 +264,7 @@ def main():
 
     # update the dictionary of hyperparameters used for training
     params["dataset_name"] = args.dataset
-    params["dataset_path"] = os.path.join(r"./datasets", ("NC-release-data-checked" if args.dataset == "3D-CBCT-Tooth" else args.dataset))
+    params["dataset_path"] = os.path.join(r"./datasets", args.dataset)
     params["model_name"] = args.model
     if args.pretrain_weight is None:
         raise RuntimeError("model weights cannot be None")
