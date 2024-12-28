@@ -96,7 +96,7 @@ params_3D_CBCT_Tooth = {
     "run_dir": r"./runs",
     "start_epoch": 0,
     "end_epoch": 3,
-    "best_dice": 0.60,
+    "best_dice": 0,
     "update_weight_freq": 32,
     "terminal_show_freq": 256,
     "save_epoch_freq": 4,
