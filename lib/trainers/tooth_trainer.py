@@ -41,7 +41,7 @@ class ToothTrainer:
             if self.opt["resume"] is None:
                 utils.make_dirs(self.checkpoint_dir)
                 utils.make_dirs(self.tensorboard_dir)
-            self.writer = SummaryWriter(log_dir=self.tensorboard_dir, purge_step=0, max_queue=1, flush_secs=30)
+            # self.writer = SummaryWriter(log_dir=self.tensorboard_dir, purge_step=0, max_queue=1, flush_secs=30)
 
         self.start_epoch = self.opt["start_epoch"]
         self.end_epoch = self.opt["end_epoch"]
@@ -83,7 +83,7 @@ class ToothTrainer:
                                             self.statistics_dict["train"]["DSC"]["avg"]/self.statistics_dict["train"]["count"],
                                             self.statistics_dict["valid"]["DSC"]["avg"]/self.statistics_dict["valid"]["count"],
                                             self.best_dice), self.log_txt_path)
-                self.write_statistcs(mode="epoch", iter=epoch)
+                # self.write_statistcs(mode="epoch", iter=epoch)
 
             if self.opt["optimize_params"]:
                 nni.report_intermediate_result(
@@ -92,8 +92,8 @@ class ToothTrainer:
         if self.opt["optimize_params"]:
             nni.report_final_result(self.best_dice)
 
-        time.sleep(60)
-        self.writer.close()
+        # time.sleep(60)
+        # self.writer.close()
 
 
 
@@ -148,8 +148,8 @@ class ToothTrainer:
             self.calculate_metric_and_update_statistcs(output.cpu().float(), target.cpu().float(), len(target), dice_loss.cpu(), mode="train")
             t9 = time.time()
 
-            if (batch_idx + 1) % self.update_weight_freq == 0 and (not self.opt["optimize_params"]):
-                self.write_statistcs(mode="step", iter=epoch*len(self.train_data_loader)+batch_idx)
+            # if (batch_idx + 1) % self.update_weight_freq == 0 and (not self.opt["optimize_params"]):
+            #     self.write_statistcs(mode="step", iter=epoch*len(self.train_data_loader)+batch_idx)
 
             if (batch_idx + 1) % self.terminal_show_freq == 0:
                 print("epoch:[{:03d}/{:03d}]  step:[{:04d}/{:04d}]  lr:{:.6f}  loss:{:.6f}  dsc:{:.6f}"
