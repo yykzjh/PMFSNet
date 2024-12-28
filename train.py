@@ -53,7 +53,7 @@ params_3D_CBCT_Tooth = {
     "dataset_path": r"./datasets/3D-CBCT-Tooth",
     "create_data": False,
     "batch_size": 1,
-    "num_workers": 2,
+    "num_workers": 4,
     # —————————————————————————————————————————————    Model     ——————————————————————————————————————————————————————
     "model_name": "UNet3D",
     "in_channels": 1,
