@@ -18,7 +18,7 @@ def random_shift(img_numpy, label=None, max_percentage=0.2):
 
     """
     dim1, dim2, dim3 = img_numpy.shape
-    m1, m2, m3 = int(dim1 * max_percentage / 2), int(dim1 * max_percentage / 2), int(dim1 * max_percentage / 2)
+    m1, m2, m3 = max(int(dim1 * max_percentage / 2), 1), max(int(dim1 * max_percentage / 2), 1), max(int(dim1 * max_percentage / 2), 1)
     d1 = np.random.randint(-m1, m1)
     d2 = np.random.randint(-m2, m2)
     d3 = np.random.randint(-m3, m3)
