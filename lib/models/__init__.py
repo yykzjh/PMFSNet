@@ -52,7 +52,7 @@ def get_model_optimizer_lr_scheduler(opt):
             model = DenseVNet(in_channels=opt["in_channels"], classes=opt["classes"])
 
         elif opt["model_name"] == "UNet3D":
-            model = UNet3D(opt["in_channels"], opt["classes"], final_sigmoid=False)
+            model = UNet3D(in_channels=opt["in_channels"], out_channels=opt["classes"], is_segmentation=False)
 
         elif opt["model_name"] == "VNet":
             model = VNet(in_channels=opt["in_channels"], classes=opt["classes"])
@@ -281,7 +281,7 @@ def get_model(opt):
             model = DenseVNet(in_channels=opt["in_channels"], classes=opt["classes"])
 
         elif opt["model_name"] == "UNet3D":
-            model = UNet3D(opt["in_channels"], opt["classes"], final_sigmoid=False)
+            model = UNet3D(in_channels=opt["in_channels"], out_channels=opt["classes"], is_segmentation=False)
 
         elif opt["model_name"] == "VNet":
             model = VNet(in_channels=opt["in_channels"], classes=opt["classes"])

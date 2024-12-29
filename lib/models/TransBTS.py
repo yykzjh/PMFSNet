@@ -237,7 +237,7 @@ class BTS(TransformerBTS):
         y2 = self.DeBlock2(y2)
 
         y = self.endconv(y2)  # (1, 4, 128, 128, 128)
-        y = self.Softmax(y)
+        # y = self.Softmax(y)
         return y
 
 
