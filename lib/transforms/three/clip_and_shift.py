@@ -22,7 +22,6 @@ class ClipAndShift(object):
         img_numpy[img_numpy > self.upper_bound] = self.upper_bound
 
         img_numpy -= self.lower_bound
-
         return img_numpy, label
 
 

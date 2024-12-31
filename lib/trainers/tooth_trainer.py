@@ -145,7 +145,7 @@ class ToothTrainer:
                     self.optimizer.zero_grad()
 
             t8 = time.time()
-            self.calculate_metric_and_update_statistcs(output.cpu().float(), target.cpu().float(), len(target), dice_loss.cpu(), mode="train")
+            self.calculate_metric_and_update_statistcs(output.cpu().float(), target.cpu(), len(target), dice_loss.cpu(), mode="train")
             t9 = time.time()
 
             # if (batch_idx + 1) % self.update_weight_freq == 0 and (not self.opt["optimize_params"]):
@@ -262,9 +262,9 @@ class ToothTrainer:
 
     def calculate_metric_and_update_statistcs(self, output, target, cur_batch_size, loss=None, mode="train"):
         mask = torch.zeros(self.opt["classes"])
-        unique_index = torch.unique(target).int()
+        unique_index = torch.unique(target)
         for index in unique_index:
-            mask[index] = 1
+            mask[index.item()] = 1
         self.statistics_dict[mode]["count"] += cur_batch_size
         for i, class_name in self.opt["index_to_class_dict"].items():
             if mask[i] == 1:

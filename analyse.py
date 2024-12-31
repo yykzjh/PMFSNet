@@ -19,7 +19,98 @@ from ptflops import get_model_complexity_info
 from pytorch_model_summary import summary
 
 import lib.models as models
+import lib.dataloaders as dataloaders
 
+
+params_3D_CBCT_Tooth = {
+    # ——————————————————————————————————————————————    Launch Initialization    —————————————————————————————————————————————————
+    "CUDA_VISIBLE_DEVICES": "0",
+    "seed": 1777777,
+    "cuda": True,
+    "benchmark": False,
+    "deterministic": True,
+    # —————————————————————————————————————————————     Preprocessing      ————————————————————————————————————————————————————
+    "resample_spacing": [0.5, 0.5, 0.5],
+    "clip_lower_bound": -1412,
+    "clip_upper_bound": 17943,
+    "samples_train": 2048,
+    "crop_size": (160, 160, 96),
+    "crop_threshold": 0.5,
+    # ——————————————————————————————————————————————    Data Augmentation    ——————————————————————————————————————————————————————
+    "augmentation_probability": 0.3,
+    "augmentation_method": "Choice",
+    "open_elastic_transform": True,
+    "elastic_transform_sigma": 20,
+    "elastic_transform_alpha": 1,
+    "open_gaussian_noise": True,
+    "gaussian_noise_mean": 0,
+    "gaussian_noise_std": 0.01,
+    "open_random_flip": True,
+    "open_random_rescale": True,
+    "random_rescale_min_percentage": 0.5,
+    "random_rescale_max_percentage": 1.5,
+    "open_random_rotate": True,
+    "random_rotate_min_angle": -50,
+    "random_rotate_max_angle": 50,
+    "open_random_shift": True,
+    "random_shift_max_percentage": 0.3,
+    "normalize_mean": 0.05029342141696459,
+    "normalize_std": 0.028477091559295814,
+    # —————————————————————————————————————————————    Data Loading     ——————————————————————————————————————————————————————
+    "dataset_name": "3D-CBCT-Tooth",
+    "dataset_path": r"./datasets/3D-CBCT-Tooth",
+    "create_data": False,
+    "batch_size": 1,
+    "num_workers": 2,
+    # —————————————————————————————————————————————    Model     ——————————————————————————————————————————————————————
+    "model_name": "PMFSNet",
+    "in_channels": 1,
+    "classes": 2,
+    "scaling_version": "TINY",
+    "dimension": "3d",
+    "index_to_class_dict":
+    {
+        0: "background",
+        1: "foreground"
+    },
+    "resume": None,
+    "pretrain": None,
+    # ——————————————————————————————————————————————    Optimizer     ——————————————————————————————————————————————————————
+    "optimizer_name": "Adam",
+    "learning_rate": 0.0005,
+    "weight_decay": 0.00005,
+    "momentum": 0.8,
+    # ———————————————————————————————————————————    Learning Rate Scheduler     —————————————————————————————————————————————————————
+    "lr_scheduler_name": "ReduceLROnPlateau",
+    "gamma": 0.1,
+    "step_size": 9,
+    "milestones": [1, 3, 5, 7, 8, 9],
+    "T_max": 2,
+    "T_0": 2,
+    "T_mult": 2,
+    "mode": "max",
+    "patience": 1,
+    "factor": 0.5,
+    # ————————————————————————————————————————————    Loss And Metric     ———————————————————————————————————————————————————————
+    "metric_names": ["DSC"],
+    "loss_function_name": "DiceLoss",
+    "class_weight": [0.00551122, 0.99448878],
+    "sigmoid_normalization": False,
+    "dice_loss_mode": "extension",
+    "dice_mode": "standard",
+    # —————————————————————————————————————————————   Training   ——————————————————————————————————————————————————————
+    "optimize_params": False,
+    "use_amp": False,
+    "run_dir": r"./runs",
+    "start_epoch": 0,
+    "end_epoch": 20,
+    "best_dice": 0,
+    "update_weight_freq": 32,
+    "terminal_show_freq": 256,
+    "save_epoch_freq": 4,
+    # ————————————————————————————————————————————   Testing   ———————————————————————————————————————————————————————
+    "crop_stride": [32, 32, 32]
+}
 
 
 def generate_segmented_sample_image(scale=1):
@@ -144,9 +235,29 @@ def analyse_models(model_names_list):
         print(summary(model, input, show_input=False, show_hierarchical=False))
 
 
+def analyse_valid_set():
+    valid_loader = dataloaders.get_test_dataloader(params_3D_CBCT_Tooth)
+    for batch_idx, (input_tensor, target) in enumerate(valid_loader):
+        unique_index = torch.unique(target)
+        print(unique_index)
+
+
+def analyse_train_set():
+    train_loader, valid_loader = dataloaders.get_dataloader(params_3D_CBCT_Tooth)
+    for batch_idx, (input_tensor, target) in enumerate(train_loader):
+        unique_index = torch.unique(target)
+        print(unique_index)
+        for index in unique_index:
+            print(index.item())
+
+
+
 if __name__ == '__main__':
-    generate_segmented_sample_image()
+    # generate_segmented_sample_image()
 
     # generate_bubble_image()
 
     # analyse_models(["UNet", "AttU_Net", "CANet", "CENet", "CPFNet", "CKDNet", "SwinUnet", "DATransUNet", "PMFSNet"])
+
+    # analyse_valid_set()
+    analyse_train_set()

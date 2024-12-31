@@ -31,7 +31,7 @@ class ToTensor(object):
         img_tensor = img_tensor / (self.upper_bound - self.lower_bound)
 
         if label is not None:
-            label_tensor = torch.FloatTensor(np.ascontiguousarray(label))
+            label_tensor = torch.tensor(np.ascontiguousarray(label), dtype=torch.uint8)
             return img_tensor, label_tensor
         else:
             return img_tensor, label
