@@ -55,6 +55,21 @@ class ToothTester:
         np.save(segmentation_image_path, segmented_image)
         print("Save segmented image to {}".format(segmentation_image_path))
 
+    def test_single_image_without_label(self, image):
+        test_transforms = transforms.ComposeTransforms([
+            transforms.ClipAndShift(self.opt["clip_lower_bound"], self.opt["clip_upper_bound"]),
+            transforms.ToTensor(self.opt["clip_lower_bound"], self.opt["clip_upper_bound"]),
+            transforms.Normalize(self.opt["normalize_mean"], self.opt["normalize_std"])
+        ])
+        image, _ = test_transforms(image, None)
+        self.model.eval()
+
+        with torch.no_grad():
+            image = torch.FloatTensor(image.numpy()).unsqueeze(0).unsqueeze(0)
+            image = image.to(self.device)
+            output = self.split_test(image)
+            class_map = torch.argmax(output, dim=1).squeeze(0).cpu().numpy()
+        return class_map
 
     def evaluation(self, dataloader):
         self.reset_statistics_dict()

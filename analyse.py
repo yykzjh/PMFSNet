@@ -118,7 +118,7 @@ def generate_segmented_sample_image(scale=1):
     for i in range(4):
         x_min, x_max, y_min, y_max = 0, 0, 0, 0
         for j in range(12):
-            img = cv2.imread(r"./images/NC-release-data_segment_result_samples/" + str(i) + "_{:02d}".format(j + 1) + ".jpg")
+            img = cv2.imread(r"./images/3D-CBCT-Tooth_segment_result_samples/" + str(i) + "_{:02d}".format(j + 1) + ".jpg")
             img = np.rot90(img, -1)
             if j == 0:
                 h, w, _ = img.shape
@@ -151,7 +151,7 @@ def generate_segmented_sample_image(scale=1):
     w, h = image.size
     image = image.resize((scale * w, scale * h), resample=Image.Resampling.BILINEAR)
     print(image.size)
-    image.save(r"./images/NC-release-data_segment_result_samples/3D_CBCT_Tooth_segmentation.jpg")
+    image.save(r"./images/3D-CBCT-Tooth_segment_result_samples/3D_CBCT_Tooth_segmentation.jpg")
 
 
 
