@@ -30,7 +30,7 @@ def reproducibility(seed, deterministic, benchmark):
 
 
 def save_arguments(args, path):
-    with open(path + '/training_arguments.txt', 'w') as f:
+    with open(path + '/training_arguments.txt', 'w', encoding='utf-8') as f:
         json.dump(args.__dict__, f, indent=2)
     f.close()
 
@@ -77,7 +77,7 @@ def load_json_file(file_path=r"./3DTooth.json"):
         return {int(k): v for k, v in x.items()}
 
     assert os.path.exists(file_path), "{} file not exist.".format(file_path)
-    json_file = open(file_path, 'r')
+    json_file = open(file_path, 'r', encoding='utf-8')
     dict = json.load(json_file, object_hook=key_2_int)
     json_file.close()
 
